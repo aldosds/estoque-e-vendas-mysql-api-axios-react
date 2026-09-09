@@ -1,4 +1,4 @@
-const produtos = [
+let produtos = [
   { id: 1, nome: "Teclado Mecânico", preco: 150, estoque: 3 },
   { id: 2, nome: "Mouse Gamer", preco: 80, estoque: 5 },
   { id: 3, nome: "Monitor 24'", preco: 900, estoque: 2 },
@@ -12,27 +12,58 @@ if (produtoPremium) {
   divDestaque.innerHTML = `⭐ <strong>Destaque:</strong> ${produtoPremium.nome} - R$ ${produtoPremium.preco}`;
 }
 
-const valorTotal = apenasPerifericos.reduce((acc, p) => acc + p.preco, 0);
+function renderizarTabela() {
+  const tbody = document.getElementById("linhas-produtos");
 
-const tbody = document.getElementById("linhas-produtos");
-let htmlLinhas = apenasPerifericos
-  .map(
-    ({ id, nome, categoria, preco }) => `
-    <tr>
-        <td>${id}</td>
-        <td>${nome}</td>
-        <td>${categoria}</td>
-        <td>R$ ${preco}</td>
-    </tr>
-    `,
-  )
-  .join("");
+  const arrayDeLinhas = produtos.map(({ id, nome, preco, estoque }) => {
+    const ativo = estoque > 0;
 
-htmlLinhas += `
-    <tr class="total-row">
-        <td colspan="3" style="text-align: right">Total:</td>
-        <td>R$ ${valorTotal}</td>
-    </tr>
-  `;
+    return `
+        <tr>
+            <td>${id}</td>
+            <td><strong>${nome}</strong></td>
+            <td>R$ ${preco.toFixed(2)}</td>
+            <td>${ativo ? estoque : `<span class="sem-estoque">Esgotado</span>`}</td>
+            <td>${ativo ? "✅ Ativo" : "⚠️ Inativo"}</td>
+            <td>
+                <button class="btn-vender" ${!ativo ? "disabled" : ""} onclick="venderProduto(${id})">
+                    ${ativo ? "Vender (-1)" : "Sem Estoque"}
+                </button>
+            </td>
+        </tr>
+        `;
+  });
 
-tbody.innerHTML = htmlLinhas;
+  const valorTotalEstoque = produtos.reduce(
+    (acc, p) => acc + p.preco * p.estoque,
+    0,
+  );
+
+  let htmlFinal = arrayDeLinhas.join("");
+
+  htmlFinal += `
+        <tr class="total-row">
+            <td colspan="2" style="text-align: right">Total:</td>
+            <td colspan="4">R$ ${valorTotalEstoque.toFixed(2)}</td>
+        </tr>
+      `;
+
+  tbody.innerHTML = htmlFinal;
+}
+
+function venderProduto(idDoProduto) {
+  produtos = produtos.map((produto) => {
+    if (produto.id === idDoProduto) {
+      const { estoque, ...resto } = produto;
+
+      return {
+        ...resto,
+        estoque: estoque - 1,
+      };
+    }
+    return produto;
+  });
+  renderizarTabela();
+}
+
+renderizarTabela();
