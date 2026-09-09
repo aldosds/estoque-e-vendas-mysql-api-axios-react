@@ -3,7 +3,7 @@ const produtos = [
   { id: 2, nome: "Mouse Gamer", preco: 80, estoque: 5 },
   { id: 3, nome: "Monitor 24'", preco: 900, estoque: 2 },
   { id: 4, nome: "Headset USB", preco: 220, estoque: 0 },
-  { id: 5, nome: "Placa de Vídeo", preco: 2500, estoque: 0 },
+  { id: 5, nome: "Placa de Vídeo", preco: 2500, estoque: 5 },
 ];
 
 const produtoPremium = produtos.find((p) => p.id === 5);
