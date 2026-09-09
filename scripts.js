@@ -12,8 +12,6 @@ if (produtoPremium) {
   divDestaque.innerHTML = `⭐ <strong>Destaque:</strong> ${produtoPremium.nome} - R$ ${produtoPremium.preco}`;
 }
 
-const apenasPerifericos = produtos.filter((p) => p.categoria === "Periferico");
-
 const valorTotal = apenasPerifericos.reduce((acc, p) => acc + p.preco, 0);
 
 const tbody = document.getElementById("linhas-produtos");
