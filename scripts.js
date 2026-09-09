@@ -19,12 +19,12 @@ const valorTotal = apenasPerifericos.reduce((acc, p) => acc + p.preco, 0);
 const tbody = document.getElementById("linhas-produtos");
 let htmlLinhas = apenasPerifericos
   .map(
-    (p) => `
+    ({ id, nome, categoria, preco }) => `
     <tr>
-        <td>${p.id}</td>
-        <td>${p.nome}</td>
-        <td>${p.categoria}</td>
-        <td>R$ ${p.preco}</td>
+        <td>${id}</td>
+        <td>${nome}</td>
+        <td>${categoria}</td>
+        <td>R$ ${preco}</td>
     </tr>
     `,
   )
