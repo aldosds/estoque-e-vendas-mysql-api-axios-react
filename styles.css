@@ -11,11 +11,22 @@ body {
   color: #333;
 }
 
+.destaque {
+  background-color: #fff3cd;
+  border: 1px solid #ffeeba;
+  padding: 16px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+}
+
 table {
   background-color: #fff;
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 th,
@@ -30,15 +41,31 @@ th {
   color: #fff;
 }
 
+tr:hover {
+  background-color: #f8f9fa;
+}
+
 .total-row {
   font-weight: bold;
   background-color: #e9ecef;
 }
 
-.destaque {
-  background-color: #fff3cd;
-  border: 1px solid #ffeeba;
-  padding: 16px;
-  margin-bottom: 20px;
+.btn-vender {
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  cursor: pointer;
   border-radius: 4px;
+  font-weight: bold;
+}
+
+.btn-vender:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.sem-estoque {
+  color: #dc3545;
+  font-weight: bold;
 }
