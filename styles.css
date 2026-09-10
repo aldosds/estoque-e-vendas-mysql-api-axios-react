@@ -68,6 +68,10 @@ select {
   background-color: #0056b3;
 }
 
+.btn-cancelar {
+  display: none;
+}
+
 /* Estilos dos Cards de Destaque */
 .cards-container {
   display: flex;
