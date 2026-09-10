@@ -108,4 +108,36 @@ function executarVenda(idAlvo) {
   renderizarTabela();
 }
 
+// 6: Captura de Formulários (Adicionar Novos Elementos)
+const formulario = document.getElementById("form-produto");
+
+formulario.addEventListener("submit", function (evento) {
+  evento.preventDefault();
+
+  // Captura os valores digitados nos inputs HTML
+  const nomeDigitado = document.getElementById("nome").value;
+  const categoriaSelecionada = document.getElementById("categoria").value;
+  const precoDigitado = parseFloat(document.getElementById("preco").value);
+  const estoqueDigitado = parseInt(document.getElementById("estoque").value);
+  console.log(estoqueDigitado);
+
+  // Cria um novo objeto formatado exatamente igual aos outros da lista
+  const novoProduto = {
+    id: proximoId,
+    nome: nomeDigitado,
+    categoria: categoriaSelecionada,
+    preco: precoDigitado,
+    estoque: estoqueDigitado,
+  };
+
+  // Adiciona o novo produto ao nosso array principal
+  produtos.push(novoProduto);
+
+  proximoId++; // Incrementa o ID para o próximo cadastro não duplicar
+
+  formulario.reset(); // Limpa todos os campos do formulário na tela
+
+  renderizarTabela(); // Redesenha a tela exibindo o novo produto e novos totais!
+});
+
 renderizarTabela();
