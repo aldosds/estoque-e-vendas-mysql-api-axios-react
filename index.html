@@ -9,25 +9,59 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <h1>Gerenciador de Estoque e Vendas</h1>
+    <div class="container">
+      <h1>Gerenciador de Estoque e Vendas</h1>
 
-    <div id="bloco-destaque" class="destaque"></div>
+      <!-- Form de Cadastro: Captura de novos dados -->
+      <h2>Cadastrar Novo Produto</h2>
+      <form id="form-produto">
+        <div class="form-group">
+          <label for="nome">Nome do Produto</label>
+          <input type="text" id="nome" placeholder="Ex: Headset" required />
+        </div>
+        <div class="form-group">
+          <label for="categoria">Categoria</label>
+          <select id="categoria">
+            <option value="Periferico">Periferico</option>
+            <option value="Video">Video</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="preco">Preço (R$)</label>
+          <input
+            type="number"
+            id="preco"
+            step="0.01"
+            min="0"
+            placeholder="0.00"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="estoque">Estoque Inicial</label>
+          <input type="number" id="number" min="0" placeholder="0" required />
+        </div>
+        <button type="submit" class="btn-cadastrar">Adicionar Produto</button>
+      </form>
 
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Nome</th>
-          <th>Preço</th>
-          <th>Estoque</th>
-          <th>Status</th>
-          <th>Ação</th>
-        </tr>
-      </thead>
-      <tbody id="linhas-produtos">
-        <!-- Injeção via JS -->
-      </tbody>
-    </table>
+      <div id="bloco-destaque" class="destaque"></div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Preço</th>
+            <th>Estoque</th>
+            <th>Status</th>
+            <th>Ação</th>
+          </tr>
+        </thead>
+        <tbody id="linhas-produtos">
+          <!-- Injeção via JS -->
+        </tbody>
+      </table>
+    </div>
 
     <!-- Scripts -->
     <script src="./scripts.js"></script>
