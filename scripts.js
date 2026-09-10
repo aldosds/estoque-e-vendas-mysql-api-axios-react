@@ -92,17 +92,18 @@ function renderizarTabela() {
   tbody.innerHTML = htmlFinal;
 }
 
-function venderProduto(idDoProduto) {
-  produtos = produtos.map((produto) => {
-    if (produto.id === idDoProduto) {
-      const { estoque, ...resto } = produto;
+// 5: DESESTRUTURAÇÃO + OPERADOR REST (...) para Alteração Imutável
+function executarVenda(idAlvo) {
+  produtos = produtos.map((item) => {
+    if (item.id === idAlvo) {
+      const { estoque, ...propriedadesIntactas } = item;
 
       return {
-        ...resto,
+        ...propriedadesIntactas,
         estoque: estoque - 1,
       };
     }
-    return produto;
+    return item;
   });
   renderizarTabela();
 }
