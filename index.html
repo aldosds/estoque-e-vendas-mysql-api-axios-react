@@ -15,6 +15,9 @@
       <!-- Form de Cadastro: Captura de novos dados -->
       <h2>Cadastrar Novo Produto</h2>
       <form id="form-produto">
+        <!-- Campo invisível para guardar o ID na edição -->
+        <input type="hidden" id="produto-id" />
+
         <div class="form-group">
           <label for="nome">Nome do Produto</label>
           <input type="text" id="nome" placeholder="Ex: Headset" required />
@@ -38,10 +41,20 @@
           />
         </div>
         <div class="form-group">
-          <label for="estoque">Estoque Inicial</label>
+          <label for="estoque">Estoque</label>
           <input type="number" id="estoque" min="0" placeholder="0" required />
         </div>
-        <button type="submit" class="btn-cadastrar">Adicionar Produto</button>
+        <button type="submit" id="btn-submit" class="btn-cadastrar">
+          Adicionar Produto
+        </button>
+        <button
+          type="button"
+          id="btn-cancelar"
+          class="btn-cancelar"
+          onclick="cancelarEdicao()"
+        >
+          Cancelar
+        </button>
       </form>
 
       <!-- Cards de Resumo Gerencial -->
