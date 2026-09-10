@@ -31,6 +31,8 @@ let produtos = [
   },
 ];
 
+let proximoId = 6; //Controla o auto-incremento do ID
+
 const produtoPremium = produtos.find((p) => p.id === 5);
 const divDestaque = document.getElementById("bloco-destaque");
 if (produtoPremium) {
