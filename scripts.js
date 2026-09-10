@@ -49,7 +49,13 @@ function renderizarTabela() {
   const listaPerifericos = produtos.filter((p) => p.categoria === "Periferico");
   document.getElementById("card-filtro-conteudo").innerText =
     `${listaPerifericos.length} Produto(s)`;
-  console.log(listaPerifericos);
+
+  // 3: .reduce() para somar acumulados dinamicamente
+  const valorTotalPatrimonio = produtos.reduce(
+    (acumulador, p) => acumulador + p.preco * p.estoque,
+    0,
+  );
+  console.log(valorTotalPatrimonio);
 
   const tbody = document.getElementById("linhas-produtos");
 
