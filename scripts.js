@@ -55,40 +55,37 @@ function renderizarTabela() {
     (acumulador, p) => acumulador + p.preco * p.estoque,
     0,
   );
-  console.log(valorTotalPatrimonio);
 
+  // 4: .map() + DESESTRUTURAÇÃO DE OBJETOS para criar a tabela HTML
   const tbody = document.getElementById("linhas-produtos");
 
-  const arrayDeLinhas = produtos.map(({ id, nome, preco, estoque }) => {
-    const ativo = estoque > 0;
+  const arrayDeLinhasHTML = produtos.map(
+    ({ id, nome, categoria, preco, estoque }) => {
+      const temEstoque = estoque > 0;
 
-    return `
+      return `
         <tr>
             <td>${id}</td>
             <td><strong>${nome}</strong></td>
             <td>R$ ${preco.toFixed(2)}</td>
-            <td>${ativo ? estoque : `<span class="sem-estoque">Esgotado</span>`}</td>
-            <td>${ativo ? "✅ Ativo" : "⚠️ Inativo"}</td>
+            <td>${categoria}</td>
+            <td>${temEstoque ? estoque : `<span class="badge-esgotado">Esgotado</span>`}</td>            
             <td>
-                <button class="btn-vender" ${!ativo ? "disabled" : ""} onclick="venderProduto(${id})">
-                    ${ativo ? "Vender (-1)" : "Sem Estoque"}
+                <button class="btn-vender" ${!temEstoque ? "disabled" : ""} onclick="executarVenda(${id})">
+                    ${temEstoque ? "Vender (-1)" : "Indisponível"}
                 </button>
             </td>
         </tr>
         `;
-  });
-
-  const valorTotalEstoque = produtos.reduce(
-    (acc, p) => acc + p.preco * p.estoque,
-    0,
+    },
   );
 
-  let htmlFinal = arrayDeLinhas.join("");
+  let htmlFinal = arrayDeLinhasHTML.join("");
 
   htmlFinal += `
         <tr class="total-row">
-            <td colspan="2" style="text-align: right">Total:</td>
-            <td colspan="4">R$ ${valorTotalEstoque.toFixed(2)}</td>
+            <td colspan="2" style="text-align: right">Patrimônio Total em Estoque:</td>
+            <td colspan="4">R$ ${valorTotalPatrimonio.toFixed(2)}</td>
         </tr>
       `;
 
