@@ -33,13 +33,19 @@ let produtos = [
 
 let proximoId = 6; //Controla o auto-incremento do ID
 
-const produtoPremium = produtos.find((p) => p.id === 5);
-const divDestaque = document.getElementById("bloco-destaque");
-if (produtoPremium) {
-  divDestaque.innerHTML = `⭐ <strong>Destaque:</strong> ${produtoPremium.nome} - R$ ${produtoPremium.preco}`;
-}
-
+// 2. Função de Renderização e Atualização da Interface
 function renderizarTabela() {
+  // 1: .find() para localizar um item específico
+  const produtoCaro = produtos.find((p) => p.preco > 1000);
+  const cardPremium = document.getElementById("card-premium-conteudo");
+
+  if (produtoCaro) {
+    cardPremium.innerText = `${produtoCaro.nome} - R$ ${produtoCaro.preco.toFixed(2)}`;
+  } else {
+    cardPremium.innerText = "Nenhum acima de R$ 500";
+  }
+  console.log(cardPremium);
+
   const tbody = document.getElementById("linhas-produtos");
 
   const arrayDeLinhas = produtos.map(({ id, nome, preco, estoque }) => {
