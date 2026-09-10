@@ -4,21 +4,71 @@
   box-sizing: border-box;
 }
 
+/* Estilização básica (CSS) para organizar o layout */
 body {
-  font-family: sans-serif;
+  font-family: "Segoe UI", sans-serif;
   margin: 40px;
   background-color: #f4f7f6;
   color: #333;
 }
 
-.destaque {
-  background-color: #fff3cd;
-  border: 1px solid #ffeeba;
-  padding: 16px;
-  margin-bottom: 20px;
-  border-radius: 8px;
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
+h1,
+h2 {
+  margin-bottom: 10px;
+}
+
+/* Estilos do Formulário */
+form {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  margin-bottom: 30px;
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 150px;
+}
+
+input,
+select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  /* font-size: 14px; */
+  font-size: 0.9rem;
+}
+
+.btn-cadastrar {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-weight: bold;
+  /* font-size: 14px; */
+  font-size: 0.9rem;
+}
+
+.btn-cadastrar:hover {
+  background-color: #0056b3;
+}
+
+/* Estilos dos Cards de Destaque */
 table {
   background-color: #fff;
   width: 100%;
