@@ -44,7 +44,12 @@ function renderizarTabela() {
   } else {
     cardPremium.innerText = "Nenhum acima de R$ 500";
   }
-  console.log(cardPremium);
+
+  // 2: .filter() para isolar categorias
+  const listaPerifericos = produtos.filter((p) => p.categoria === "Periferico");
+  document.getElementById("card-filtro-conteudo").innerText =
+    `${listaPerifericos.length} Produto(s)`;
+  console.log(listaPerifericos);
 
   const tbody = document.getElementById("linhas-produtos");
 
