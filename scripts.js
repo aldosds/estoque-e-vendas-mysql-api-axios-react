@@ -108,18 +108,32 @@ function executarVenda(idAlvo) {
   renderizarTabela();
 }
 
-// 6: Captura de Formulários (Adicionar Novos Elementos)
+// 6: Captura de Formulários (Adicionar Novos Elementos com Validação)
 const formulario = document.getElementById("form-produto");
 
 formulario.addEventListener("submit", function (evento) {
-  evento.preventDefault();
+  evento.preventDefault(); // Impede a página de recarregar
 
-  // Captura os valores digitados nos inputs HTML
-  const nomeDigitado = document.getElementById("nome").value;
+  // Captura o valor digitado tirando os espaços extras nas pontas (.trim())
+  const nomeDigitado = document.getElementById("nome").value.trim();
   const categoriaSelecionada = document.getElementById("categoria").value;
   const precoDigitado = parseFloat(document.getElementById("preco").value);
   const estoqueDigitado = parseInt(document.getElementById("estoque").value);
-  console.log(estoqueDigitado);
+
+  // VALIDAÇÃO DE DUPLICIDADE
+  // O .some() verifica se já existe algum produto com o mesmo nome
+  // Usamos .toLowerCase() para que "Teclado" e "teclado" sejam considerados iguais (Case Insensitive)
+  const produtoJaExiste = produtos.some(
+    (p) => p.nome.toLowerCase() === nomeDigitado.toLowerCase(),
+  );
+  console.log(produtoJaExiste);
+
+  if (produtoJaExiste) {
+    alert(
+      `⚠️ Erro: Já existe um produto cadastrado com o nome ${nomeDigitado}!`,
+    );
+    return;
+  }
 
   // Cria um novo objeto formatado exatamente igual aos outros da lista
   const novoProduto = {
