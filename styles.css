@@ -163,8 +163,28 @@ tr:hover {
   font-weight: bold;
 }
 
-.btn-vender:disabled {
-  background-color: #6c757d;
+.btn-editar {
+  background-color: #ffc107;
+  color: #212529;
+  border: none;
+  padding: 6px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  margin-left: 5px;
+}
+
+.btn-excluir {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  margin-left: 5px;
+}
+
+button:disabled {
+  background-color: #9aa8a9 !important;
   cursor: not-allowed;
 }
 
@@ -176,14 +196,4 @@ tr:hover {
   border-radius: 4px;
   /* font-size: 12px; */
   font-size: 0.8rem;
-}
-
-.btn-editar {
-  background-color: #ffc107;
-  color: #212529;
-  border: none;
-  padding: 6px 12px;
-  cursor: pointer;
-  border-radius: 4px;
-  margin-left: 5px;
 }
