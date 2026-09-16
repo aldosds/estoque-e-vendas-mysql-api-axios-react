@@ -1,40 +1,35 @@
-// 1. Dados em memória
-let produtos = [
-  {
-    id: 1,
-    nome: "Teclado Mecânico",
-    categoria: "Periferico",
-    preco: 150,
-    estoque: 3,
-  },
-  {
-    id: 2,
-    nome: "Mouse Gamer",
-    categoria: "Periferico",
-    preco: 80,
-    estoque: 5,
-  },
-  { id: 3, nome: "Monitor 24'", categoria: "Video", preco: 900, estoque: 2 },
-  {
-    id: 4,
-    nome: "Headset USB",
-    categoria: "Periferico",
-    preco: 220,
-    estoque: 0,
-  },
-  {
-    id: 5,
-    nome: "Placa de Vídeo",
-    categoria: "Video",
-    preco: 2500,
-    estoque: 5,
-  },
-];
+// 1. URL da API fictícia que você criará no Node.js
+const API_URL = "http://localhost:3000/api/produtos";
+let produtos = [];
 
-let proximoId = 6; //Controla o auto-incremento do ID
+// Carrega os dados do banco de dados (API) assim que abre a página
+try {
+  if (produtos.length === 0 && !window.inicializado) {
+    produtos = [
+      {
+        id: 1,
+        nome: "Teclado Mecânico",
+        preco: 150,
+        categoria: "Periferico",
+        estoque: 3,
+      },
+      {
+        id: 2,
+        nome: "Mouse Gamer",
+        preco: 80,
+        categoria: "Periferico",
+        estoque: 5,
+      },
+    ];
+    window.inicializado = true;
+  }
+  atualizarPainel();
+} catch (error) {
+  console.error("Erro ao buscar dados do MySQL:", error);
+}
 
 // 2. Função de Renderização e Atualização da Interface
-function renderizarTabela() {
+function atualizarPainel() {
   // 1: .find() para localizar um item específico
   const produtoCaro = produtos.find((p) => p.preco > 1000);
   const cardPremium = document.getElementById("card-premium-conteudo");
@@ -105,7 +100,7 @@ function executarVenda(idAlvo) {
     }
     return item;
   });
-  renderizarTabela();
+  atualizarPainel();
 }
 
 // 6: Captura de Formulários (Adicionar Novos Elementos com Validação)
@@ -151,7 +146,7 @@ formulario.addEventListener("submit", function (evento) {
 
   formulario.reset(); // Limpa todos os campos do formulário na tela
 
-  renderizarTabela(); // Redesenha a tela exibindo o novo produto e novos totais!
+  atualizarPainel(); // Redesenha a tela exibindo o novo produto e novos totais!
 });
 
-renderizarTabela();
+atualizarPainel();
