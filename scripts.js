@@ -42,7 +42,7 @@ function renderizarTabela() {
   if (produtoCaro) {
     cardPremium.innerText = `${produtoCaro.nome} - R$ ${produtoCaro.preco.toFixed(2)}`;
   } else {
-    cardPremium.innerText = "Nenhum acima de R$ 500";
+    cardPremium.innerText = "Nenhum acima de R$ 1000";
   }
 
   // 2: .filter() para isolar categorias
