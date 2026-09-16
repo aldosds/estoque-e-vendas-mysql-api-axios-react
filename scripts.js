@@ -161,4 +161,13 @@ document
     cancelarEdicao();
   });
 
+// OPERAÇÃO: Excluir Produto (Usa .filter() para remover da lista)
+async function excluirProduto(idAlvo) {
+  if (confirm("Tem certeza que deseja excluir este produto?")) {
+    // No backend seria: await fetch(`${API_URL}/${idAlvo}`, { method: 'DELETE' });
+    produtos = produtos.filter((p) => p.id !== idAlvo);
+    carregarProdutos();
+  }
+}
+
 carregarProdutos();
