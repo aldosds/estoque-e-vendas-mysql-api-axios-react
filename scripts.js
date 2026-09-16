@@ -99,51 +99,29 @@ function venderProduto(idAlvo) {
   atualizarPainel();
 }
 
-// 6: Captura de Formulários (Adicionar Novos Elementos com Validação)
-const formulario = document.getElementById("form-produto");
+// OPERAÇÃO: Preparar Edição (Usa .find() para achar o item e preencher o formulário)
+function prepararEdicao(idAlvo) {
+  const produto = produtos.find((p) => p.id === idAlvo);
+  if (!produto) return;
 
-formulario.addEventListener("submit", function (evento) {
-  evento.preventDefault(); // Impede a página de recarregar
+  document.getElementById("produto-id").value = produto.id;
+  document.getElementById("nome").value = produto.nome;
+  document.getElementById("categoria").value = produto.categoria;
+  document.getElementById("preco").value = produto.preco;
+  document.getElementById("estoque").value = produto.estoque;
 
-  // Captura o valor digitado tirando os espaços extras nas pontas (.trim())
-  const nomeDigitado = document.getElementById("nome").value.trim();
-  const categoriaSelecionada = document.getElementById("categoria").value;
-  const precoDigitado = parseFloat(document.getElementById("preco").value);
-  const estoqueDigitado = parseInt(document.getElementById("estoque").value);
+  document.getElementById("titulo-form").innerText = "Editar Produto";
+  document.getElementById("btn-submit").innerText = "Salvar Alterações";
+  document.getElementById("btn-cancelar").style.display = "inline-block";
+}
 
-  // VALIDAÇÃO DE DUPLICIDADE
-  // O .some() verifica se já existe algum produto com o mesmo nome
-  // Usamos .toLowerCase() para que "Teclado" e "teclado" sejam considerados iguais (Case Insensitive)
-  const produtoJaExiste = produtos.some(
-    (p) => p.nome.toLowerCase() === nomeDigitado.toLowerCase(),
-  );
-  console.log(produtoJaExiste);
-
-  if (produtoJaExiste) {
-    alert(
-      `⚠️ Erro: Já existe um produto cadastrado com o nome ${nomeDigitado}!`,
-    );
-    return;
-  }
-
-  // Cria um novo objeto formatado exatamente igual aos outros da lista
-  const novoProduto = {
-    id: proximoId,
-    nome: nomeDigitado,
-    categoria: categoriaSelecionada,
-    preco: precoDigitado,
-    estoque: estoqueDigitado,
-  };
-
-  // Adiciona o novo produto ao nosso array principal
-  produtos.push(novoProduto);
-
-  proximoId++; // Incrementa o ID para o próximo cadastro não duplicar
-
-  formulario.reset(); // Limpa todos os campos do formulário na tela
-
-  atualizarPainel(); // Redesenha a tela exibindo o novo produto e novos totais!
-});
+function cancelarEdicao() {
+  document.getElementById("form-produto").reset();
+  document.getElementById("produto-id").value = "";
+  document.getElementById("titulo-form").innerText = "Cadastrar Novo Produto";
+  document.getElementById("btn-submit").innerText = "Adicionar Produto";
+  document.getElementById("btn-cancelar").style.display = "none";
+}
 
 atualizarPainel();
 carregarProdutos();
