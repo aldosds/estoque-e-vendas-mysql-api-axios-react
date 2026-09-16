@@ -61,15 +61,25 @@ select {
   border-radius: 4px;
   font-weight: bold;
   /* font-size: 14px; */
-  font-size: 0.9rem;
+  /* font-size: 0.9rem; */
+  opacity: 0.9;
 }
 
-.btn-cadastrar:hover {
-  background-color: #0056b3;
+.btn-cadastrar:hover,
+.btn-cancelar:hover {
+  opacity: 1;
 }
 
 .btn-cancelar {
   display: none;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-weight: bold;
+  opacity: 0.9;
 }
 
 /* Estilos dos Cards de Destaque */
