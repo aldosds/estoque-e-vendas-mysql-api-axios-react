@@ -123,5 +123,42 @@ function cancelarEdicao() {
   document.getElementById("btn-cancelar").style.display = "none";
 }
 
-atualizarPainel();
+// Envio do formulário (Salvar Novo ou Atualizar Existente)
+document
+  .getElementById("form-produto")
+  .addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const id = document.getElementById("produto-id").value;
+    const nome = document.getElementById("nome").value.trim();
+    const categoria = document.getElementById("categoria").value;
+    const preco = parseFloat(document.getElementById("preco").value);
+    const estoque = parseInt(document.getElementById("estoque").value);
+
+    // Validação de nome duplicado (ignora o próprio produto se for uma edição)
+    const duplicado = produtos.some(
+      (p) => p.nome.toLowerCase() === nome.toLowerCase() && p.id !== Number(id),
+    );
+
+    if (duplicado) {
+      alert("Esse nome de produto já existe!");
+      return;
+    }
+
+    if (id) {
+      // MODO EDIÇÃO: Atualiza o item usando .map e desestruturação
+      produtos = produtos.map((p) =>
+        p.id === Number(id) ? { ...p, nome, categoria, preco, estoque } : p,
+      );
+    } else {
+      // MODO CADASTRO: Adiciona novo item
+      const novo = { id: Date.now(), nome, categoria, preco, estoque };
+      produtos.push(novo);
+      document.getElementById("form-produto").reset();
+    }
+
+    carregarProdutos();
+    cancelarEdicao();
+  });
+
 carregarProdutos();
