@@ -44,10 +44,10 @@ function atualizarPainel() {
 
   const cardPremium = document.getElementById("card-premium-conteudo");
 
-  if (produtoCaro) {
-    cardPremium.innerText = `${produtoCaro.nome} - R$ ${produtoCaro.preco.toFixed(2)}`;
+  if (produtoMaisCaro) {
+    cardPremium.innerText = `${produtoMaisCaro.nome} - R$ ${produtoMaisCaro.preco.toFixed(2)}`;
   } else {
-    cardPremium.innerText = "Nenhum acima de R$ 1000";
+    cardPremium.innerText = "Nenhum produto cadastrado";
   }
 
   // .filter() para isolar categorias
@@ -55,40 +55,38 @@ function atualizarPainel() {
   document.getElementById("card-filtro-conteudo").innerText =
     `${listaPerifericos.length} Produto(s)`;
 
-  // 4: .map() + DESESTRUTURAÇÃO DE OBJETOS para criar a tabela HTML
+  // Renderização da tabela com .map e Desestruturação
   const tbody = document.getElementById("linhas-produtos");
+  tbody.innerHTML = produtos
+    .map(
+      ({ id, nome, categoria, preco, estoque }) => `
+      <tr>
+        <td>${id}</td>
+        <td><strong>${nome}</strong></td>
+        <td>${categoria}</td>
+        <td>R$ ${preco.toFixed(2)}</td>
+        <td>${estoque <= 0 ? `<span class="badge-esgotado">Esgotado</span>` : estoque}</td>
+        <td>
+          <button class="btn-vender" ${estoque <= 0 ? "disabled" : ""} onclick="venderProduto(${id})">
+            ${estoque <= 0 ? "Acabou" : "Vender"}
+          </button>
+          <button class="btn-editar" onclick="prepararEdicao(${id})">Editar</button>
+          <button class="btn-excluir" ${estoque > 0 ? "disabled" : ""} onclick="excluirProduto(${id})">
+            ${estoque <= 0 ? "Excluir" : "Inativo"}
+          </button>
+        </td>
+      </tr>
+    `,
+    )
+    .join("");
 
-  const arrayDeLinhasHTML = produtos.map(
-    ({ id, nome, categoria, preco, estoque }) => {
-      const temEstoque = estoque > 0;
-
-      return `
-        <tr>
-            <td>${id}</td>
-            <td><strong>${nome}</strong></td>
-            <td>R$ ${preco.toFixed(2)}</td>
-            <td>${categoria}</td>
-            <td>${temEstoque ? estoque : `<span class="badge-esgotado">Esgotado</span>`}</td>            
-            <td>
-                <button class="btn-vender" ${!temEstoque ? "disabled" : ""} onclick="executarVenda(${id})">
-                    ${temEstoque ? "Vender (-1)" : "Indisponível"}
-                </button>
-            </td>
-        </tr>
-        `;
-    },
-  );
-
-  let htmlFinal = arrayDeLinhasHTML.join("");
-
-  htmlFinal += `
-        <tr class="total-row">
-            <td colspan="2" style="text-align: right">Patrimônio Total em Estoque:</td>
-            <td colspan="4">R$ ${valorTotalPatrimonio.toFixed(2)}</td>
-        </tr>
-      `;
-
-  tbody.innerHTML = htmlFinal;
+  // Injeta a linha final do rodapé calculada pelo .reduce()
+  tbody.innerHTML += `
+      <tr class="total-row">
+        <td colspan="3" style="text-align: right;">Patrimônio Total em Estoque:</td>
+        <td colspan="3">R$ ${valorTotalPatrimonio.toFixed(2)}</td>
+      </tr>
+    `;
 }
 
 // 5: DESESTRUTURAÇÃO + OPERADOR REST (...) para Alteração Imutável
