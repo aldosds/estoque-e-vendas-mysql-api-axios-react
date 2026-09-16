@@ -3,29 +3,31 @@ const API_URL = "http://localhost:3000/api/produtos";
 let produtos = [];
 
 // Carrega os dados do banco de dados (API) assim que abre a página
-try {
-  if (produtos.length === 0 && !window.inicializado) {
-    produtos = [
-      {
-        id: 1,
-        nome: "Teclado Mecânico",
-        preco: 150,
-        categoria: "Periferico",
-        estoque: 3,
-      },
-      {
-        id: 2,
-        nome: "Mouse Gamer",
-        preco: 80,
-        categoria: "Periferico",
-        estoque: 5,
-      },
-    ];
-    window.inicializado = true;
+async function carregarProdutos() {
+  try {
+    if (produtos.length === 0 && !window.inicializado) {
+      produtos = [
+        {
+          id: 1,
+          nome: "Teclado Mecânico",
+          preco: 150,
+          categoria: "Periferico",
+          estoque: 3,
+        },
+        {
+          id: 2,
+          nome: "Mouse Gamer",
+          preco: 80,
+          categoria: "Periferico",
+          estoque: 5,
+        },
+      ];
+      window.inicializado = true;
+    }
+    atualizarPainel();
+  } catch (error) {
+    console.error("Erro ao buscar dados do MySQL:", error);
   }
-  atualizarPainel();
-} catch (error) {
-  console.error("Erro ao buscar dados do MySQL:", error);
 }
 
 // Função de Renderização e Atualização da Interface
@@ -89,19 +91,11 @@ function atualizarPainel() {
     `;
 }
 
-// 5: DESESTRUTURAÇÃO + OPERADOR REST (...) para Alteração Imutável
-function executarVenda(idAlvo) {
-  produtos = produtos.map((item) => {
-    if (item.id === idAlvo) {
-      const { estoque, ...propriedadesIntactas } = item;
-
-      return {
-        ...propriedadesIntactas,
-        estoque: estoque - 1,
-      };
-    }
-    return item;
-  });
+// OPERADOR REST (...) para Alteração Imutável
+function venderProduto(idAlvo) {
+  produtos = produtos.map((p) =>
+    p.id === idAlvo ? { ...p, estoque: p.estoque - 1 } : p,
+  );
   atualizarPainel();
 }
 
@@ -152,3 +146,4 @@ formulario.addEventListener("submit", function (evento) {
 });
 
 atualizarPainel();
+carregarProdutos();
