@@ -1,4 +1,4 @@
-// 1. URL da API fictícia que você criará no Node.js
+// URL da API fictícia que você criará no Node.js
 const API_URL = "http://localhost:3000/api/produtos";
 let produtos = [];
 
@@ -28,10 +28,20 @@ try {
   console.error("Erro ao buscar dados do MySQL:", error);
 }
 
-// 2. Função de Renderização e Atualização da Interface
+// Função de Renderização e Atualização da Interface
 function atualizarPainel() {
-  // 1: .find() para localizar um item específico
-  const produtoCaro = produtos.find((p) => p.preco > 1000);
+  // Ele compara o preço de todos os itens e sempre escolhe o maior, não importa a ordem de cadastro
+  const produtoMaisCaro = produtos.reduce((maior, atual) => {
+    return atual.preco > (maior?.preco || 0) ? atual : maior;
+  }, null);
+
+  // .reduce() para somar acumulados dinamicamente
+  const valorTotalPatrimonio = produtos.reduce(
+    (acumulador, p) => acumulador + p.preco * p.estoque,
+    0,
+  );
+  console.log(valorTotalPatrimonio);
+
   const cardPremium = document.getElementById("card-premium-conteudo");
 
   if (produtoCaro) {
@@ -40,16 +50,10 @@ function atualizarPainel() {
     cardPremium.innerText = "Nenhum acima de R$ 1000";
   }
 
-  // 2: .filter() para isolar categorias
+  // .filter() para isolar categorias
   const listaPerifericos = produtos.filter((p) => p.categoria === "Periferico");
   document.getElementById("card-filtro-conteudo").innerText =
     `${listaPerifericos.length} Produto(s)`;
-
-  // 3: .reduce() para somar acumulados dinamicamente
-  const valorTotalPatrimonio = produtos.reduce(
-    (acumulador, p) => acumulador + p.preco * p.estoque,
-    0,
-  );
 
   // 4: .map() + DESESTRUTURAÇÃO DE OBJETOS para criar a tabela HTML
   const tbody = document.getElementById("linhas-produtos");
