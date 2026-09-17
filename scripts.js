@@ -42,7 +42,6 @@ function atualizarPainel() {
     (acumulador, p) => acumulador + p.preco * p.estoque,
     0,
   );
-  console.log(valorTotalPatrimonio);
 
   const cardPremium = document.getElementById("card-premium-conteudo");
 
