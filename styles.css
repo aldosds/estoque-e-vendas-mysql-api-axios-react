@@ -118,6 +118,15 @@ select {
   margin-top: 6px;
 }
 
+/* Canpo de Busca */
+.busca-produto {
+  margin-bottom: 20px;
+}
+
+.campo-busca {
+  padding: 12px;
+}
+
 /* Estilos da Tabela */
 table {
   background-color: #fff;
