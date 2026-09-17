@@ -111,7 +111,7 @@ function cancelarEdicao() {
   document.getElementById("btn-cancelar").style.display = "none";
 }
 
-// Envio do formulário (Salvar Novo ou Atualizar Existente)
+// Envio do formulário: Salvar Novo (POST) ou Atualizar Existente (PUT) no MySQL
 document
   .getElementById("form-produto")
   .addEventListener("submit", async function (e) {
@@ -123,7 +123,7 @@ document
     const preco = parseFloat(document.getElementById("preco").value);
     const estoque = parseInt(document.getElementById("estoque").value);
 
-    // Validação de nome duplicado (ignora o próprio produto se for uma edição)
+    // Validação preventiva de nome duplicado na memória local atual do painel
     const duplicado = produtos.some(
       (p) => p.nome.toLowerCase() === nome.toLowerCase() && p.id !== Number(id),
     );
@@ -133,20 +133,46 @@ document
       return;
     }
 
-    if (id) {
-      // MODO EDIÇÃO: Atualiza o item usando .map e desestruturação
-      produtos = produtos.map((p) =>
-        p.id === Number(id) ? { ...p, nome, categoria, preco, estoque } : p,
-      );
-    } else {
-      // MODO CADASTRO: Adiciona novo item
-      const novo = { id: Date.now(), nome, categoria, preco, estoque };
-      produtos.push(novo);
-      document.getElementById("form-produto").reset();
-    }
+    // Prepara o objeto com os dados para enviar ao Back-end (Sem o ID, que o banco gera sozinho no cadastro)
+    const dadosProduto = { nome, categoria, preco, estoque };
 
-    carregarProdutos();
-    cancelarEdicao();
+    try {
+      if (id) {
+        // MODO EDIÇÃO: Atualiza um registro existente (Rota PUT)
+        const resposta = await fetch(`${API_URL}/${id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json", // Avisa o Node que estamos enviando um JSON
+          },
+        });
+
+        if (!resposta.ok) throw new Error("Erro ao atualizar produto.");
+
+        alert("Produto atualizado com sucesso!");
+
+        cancelarEdicao(); // Limpa os campos e reseta o título do formulário
+      } else {
+        // MODO CADASTRO: Cria um novo registro (Rota POST)
+        const resposta = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(dadosProduto),
+        });
+
+        if (!resposta.ok) throw new Error("Erro ao cadastrar produto.");
+
+        alert("Produto cadastrado com sucesso no MySQL!");
+        document.getElementById("form-produto").reset();
+      }
+
+      // Solicita ao servidor a lista renovada de produtos para atualizar a tabela na tela
+      carregarProdutos();
+    } catch (error) {
+      console.error("Erro na operação de salvamento:", error);
+      alert("Falha na comunicação com o servidor. O registro não foi salvo.");
+    }
   });
 
 // OPERAÇÃO: Excluir Produto (Usa .filter() para remover da lista)
