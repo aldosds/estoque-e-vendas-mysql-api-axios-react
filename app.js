@@ -152,9 +152,22 @@ document
 // OPERAÇÃO: Excluir Produto (Usa .filter() para remover da lista)
 async function excluirProduto(idAlvo) {
   if (confirm("Tem certeza que deseja excluir este produto?")) {
-    // No backend seria: await fetch(`${API_URL}/${idAlvo}`, { method: 'DELETE' });
-    produtos = produtos.filter((p) => p.id !== idAlvo);
-    carregarProdutos();
+    try {
+      // Faz a chamada para a rota DELETE do servidor Node.js
+      const resposta = await fetch(`${API_URL}/${idAlvo}`, {
+        method: "DELETE",
+      });
+
+      if (!resposta.ok) {
+        throw new Error("Não foi possível excluir o produto no servidor.");
+      }
+
+      // Após deletar no banco com sucesso, recarrega a lista atualizada
+      alert("Produto excluído com sucesso do banco de dados!");
+    } catch (error) {
+      console.error("Erro ao excluir produto:", error);
+      alert("Erro ao excluir o produto. Verifique se o servidor está rodando.");
+    }
   }
 }
 
