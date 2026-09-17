@@ -220,6 +220,7 @@ async function excluirProduto(idAlvo) {
 
       // Após deletar no banco com sucesso, recarrega a lista atualizada
       alert("Produto removido com sucesso!");
+      carregarProdutos();
     } catch (error) {
       console.error("Erro ao excluir produto:", error);
       alert("Erro ao excluir o produto.");
