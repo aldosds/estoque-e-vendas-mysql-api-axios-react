@@ -1,5 +1,7 @@
-// Busca a lista de produtos atualizada direto do banco de dados (MySQL)
+// Configuração da URL base da API do servidor Node.js
 const API_URL = "http://localhost:3000/api/produtos";
+
+// Variável global que armazenará os produtos vindos do MySQL
 let produtos = [];
 
 // Carrega os dados do banco de dados (API) assim que abre a página
@@ -9,9 +11,10 @@ async function carregarProdutos() {
 
     if (!resposta.ok) throw new Error("Erro ao buscar dados do servidor.");
 
-    // Alimenta nossa variável global com o array de objetos vindo do MySQL
+    // Alimenta nossa variável global com o array de objetos (JSON) vindo do MySQL
     produtos = await resposta.json();
 
+    // Atualiza toda a interface visual
     atualizarPainel();
   } catch (error) {
     console.error("Erro ao buscar dados do MySQL:", error);
@@ -19,14 +22,15 @@ async function carregarProdutos() {
   }
 }
 
-// Função de Renderização e Atualização da Interface
+// Função de Renderização e Atualização da Interface (MÉTODOS DE ARRAY: REDUCE e MAP + DESESTRUTURAÇÃO)
 function atualizarPainel() {
+  // .reduce() para encontrar o produto mais caro dinamicamente
   // Ele compara o preço de todos os itens e sempre escolhe o maior, não importa a ordem de cadastro
   const produtoMaisCaro = produtos.reduce((maior, atual) => {
     return atual.preco > (maior?.preco || 0) ? atual : maior;
   }, null);
 
-  // .reduce() para somar acumulados dinamicamente
+  // .reduce() para calcular o patrimônio total em estoque
   const valorTotalPatrimonio = produtos.reduce(
     (acumulador, p) => acumulador + p.preco * p.estoque,
     0,
@@ -34,10 +38,10 @@ function atualizarPainel() {
 
   const cardPremium = document.getElementById("card-premium-conteudo");
 
-  if (produtoMaisCaro) {
-    cardPremium.innerText = `${produtoMaisCaro.nome} - R$ ${produtoMaisCaro.preco.toFixed(2)}`;
-  } else {
-    cardPremium.innerText = "Nenhum produto cadastrado";
+  if (cardPremium) {
+    cardPremium.innerText = produtoMaisCaro
+      ? `${produtoMaisCaro.nome} - R$ ${Number(produtoMaisCaro.preco).toFixed(2)}`
+      : "Nenhum produto cadastrado";
   }
 
   // .filter() para isolar categorias
@@ -57,7 +61,7 @@ function atualizarPainel() {
         <td>R$ ${preco.toFixed(2)}</td>
         <td>${estoque <= 0 ? `<span class="badge-esgotado">Esgotado</span>` : estoque}</td>
         <td>
-          <button class="btn-vender" ${estoque <= 0 ? "disabled" : ""} onclick="venderProduto(${id})">
+          <button class="btn-vender" ${estoque <= 0 ? "disabled" : ""} onclick="executarVenda(${id})">
             ${estoque <= 0 ? "Acabou" : "Vender"}
           </button>
           <button class="btn-editar" onclick="prepararEdicao(${id})">Editar</button>
@@ -79,12 +83,27 @@ function atualizarPainel() {
     `;
 }
 
+// EXECUTAR VENDA (MÉTODO PUT RAPIDO)
 // OPERADOR REST (...) para Alteração Imutável
-function venderProduto(idAlvo) {
-  produtos = produtos.map((p) =>
-    p.id === idAlvo ? { ...p, estoque: p.estoque - 1 } : p,
-  );
-  atualizarPainel();
+async function executarVenda(idAlvo, estoqueAtual) {
+  const produto = produtos.find((p) => p.id === idAlvo);
+  if (!produto) return;
+
+  // Desestruturação + Rest para atualizar apenas o estoque imutavelmente antes do envio
+  const { estoque, ...resto } = produto;
+  const dadosAtualizados = { ...resto, estoque: estoque - 1 };
+
+  try {
+    const resposta = await fetch(`${API_URL}/${idAlvo}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(dadosAtualizados),
+    });
+    if (!resposta.ok) throw new Error();
+    carregarProdutos();
+  } catch (erro) {
+    alert("Erro ao processar venda.");
+  }
 }
 
 // OPERAÇÃO: Preparar Edição (Usa .find() para achar o item e preencher o formulário)
@@ -144,6 +163,7 @@ document
           headers: {
             "Content-Type": "application/json", // Avisa o Node que estamos enviando um JSON
           },
+          body: JSON.stringify(dadosProduto),
         });
 
         if (!resposta.ok) throw new Error("Erro ao atualizar produto.");
@@ -184,15 +204,13 @@ async function excluirProduto(idAlvo) {
         method: "DELETE",
       });
 
-      if (!resposta.ok) {
-        throw new Error("Não foi possível excluir o produto no servidor.");
-      }
+      if (!resposta.ok) throw new Error("Erro ao excluir.");
 
       // Após deletar no banco com sucesso, recarrega a lista atualizada
-      alert("Produto excluído com sucesso do banco de dados!");
+      alert("Produto removido com sucesso!");
     } catch (error) {
       console.error("Erro ao excluir produto:", error);
-      alert("Erro ao excluir o produto. Verifique se o servidor está rodando.");
+      alert("Erro ao excluir o produto.");
     }
   }
 }
