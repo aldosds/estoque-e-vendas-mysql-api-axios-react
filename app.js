@@ -203,7 +203,7 @@ document
       carregarProdutos();
     } catch (error) {
       console.error("Erro na operação de salvamento:", error);
-      alert("Falha na comunicação com o servidor. O registro não foi salvo.");
+      alert("Falha na comunicação. O registro não foi salvo.");
     }
   });
 
