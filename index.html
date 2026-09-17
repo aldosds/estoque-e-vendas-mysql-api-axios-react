@@ -3,10 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>Sistema de Vendas e Estoque</title>
 
     <!-- Styles -->
     <link rel="stylesheet" href="./styles.css" />
+
+    <!-- Importação do Chart.js -->
+    <script src="https://jsdelivr.net"></script>
   </head>
   <body>
     <div class="container">
@@ -69,6 +73,12 @@
           <div class="card-titulo">📦 Apenas Periféricos</div>
           <div id="card-filtro-conteudo" class="card-valor">0 itens</div>
         </div>
+      </div>
+
+      <!-- Área do Gráfico -->
+      <h2>Visão Geral do Estoque e Preços</h2>
+      <div class="grafico">
+        <canvas id="grafico-produtos" class="canvas"></canvas>
       </div>
 
       <!-- Campo de Busca por Digitação -->
