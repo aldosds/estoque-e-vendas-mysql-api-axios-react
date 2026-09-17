@@ -27,7 +27,12 @@ function atualizarPainel() {
   // .reduce() para encontrar o produto mais caro dinamicamente
   // Ele compara o preço de todos os itens e sempre escolhe o maior, não importa a ordem de cadastro
   const produtoMaisCaro = produtos.reduce((maior, atual) => {
-    return atual.preco > (maior?.preco || 0) ? atual : maior;
+    // Convertemos os preços vindos do banco para números reais
+    const precoAtual = Number(atual.preco);
+    const precoMaior = maior ? Number(maior.preco) : 0;
+
+    // Fazemos a comparação numérica correta
+    return precoAtual > precoMaior ? atual : maior;
   }, null);
 
   // .reduce() para calcular o patrimônio total em estoque
@@ -51,36 +56,43 @@ function atualizarPainel() {
 
   // Renderização da tabela com .map e Desestruturação
   const tbody = document.getElementById("linhas-produtos");
-  tbody.innerHTML = produtos
-    .map(
-      ({ id, nome, categoria, preco, estoque }) => `
+  if (!tbody) return;
+
+  const arrayDeLinhasHTML = produtos.map(
+    ({ id, nome, categoria, preco, estoque }) => {
+      const temEstoque = estoque > 0;
+      const precoNumerico = Number(preco);
+      return `
       <tr>
-        <td>${id}</td>
+      <td>${id}</td>
         <td><strong>${nome}</strong></td>
         <td>${categoria}</td>
-        <td>R$ ${preco.toFixed(2)}</td>
+        <td>R$ ${precoNumerico.toFixed(2)}</td>
         <td>${estoque <= 0 ? `<span class="badge-esgotado">Esgotado</span>` : estoque}</td>
         <td>
-          <button class="btn-vender" ${estoque <= 0 ? "disabled" : ""} onclick="executarVenda(${id})">
-            ${estoque <= 0 ? "Acabou" : "Vender"}
+        <button class="btn-vender" ${estoque <= 0 ? "disabled" : ""} onclick="executarVenda(${id})">
+        ${estoque <= 0 ? "Acabou" : "Vender"}
           </button>
           <button class="btn-editar" onclick="prepararEdicao(${id})">Editar</button>
           <button class="btn-excluir" ${estoque > 0 ? "disabled" : ""} onclick="excluirProduto(${id})">
-            ${estoque <= 0 ? "Excluir" : "Inativo"}
+          ${estoque <= 0 ? "Excluir" : "Inativo"}
           </button>
-        </td>
-      </tr>
-    `,
-    )
-    .join("");
+          </td>
+          </tr>
+          `;
+    },
+  );
+  let htmlFinal = arrayDeLinhasHTML.join("");
 
   // Injeta a linha final do rodapé calculada pelo .reduce()
-  tbody.innerHTML += `
-      <tr class="total-row">
-        <td colspan="3" style="text-align: right;">Patrimônio Total em Estoque:</td>
-        <td colspan="3">R$ ${valorTotalPatrimonio.toFixed(2)}</td>
-      </tr>
+  htmlFinal += `
+    <tr class="total-row">
+    <td colspan="3" style="text-align: right;">Patrimônio Total em Estoque:</td>
+    <td colspan="3">R$ ${valorTotalPatrimonio.toFixed(2)}</td>
+    </tr>
     `;
+
+  tbody.innerHTML = htmlFinal;
 }
 
 // EXECUTAR VENDA (MÉTODO PUT RAPIDO)
