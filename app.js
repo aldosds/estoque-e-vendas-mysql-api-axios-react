@@ -23,7 +23,7 @@ async function carregarProdutos() {
 }
 
 // Função de Renderização e Atualização da Interface (MÉTODOS DE ARRAY: REDUCE e MAP + DESESTRUTURAÇÃO)
-function atualizarPainel() {
+function atualizarPainel(listaParaExibir = produtos) {
   // .reduce() para encontrar o produto mais caro dinamicamente
   // Ele compara o preço de todos os itens e sempre escolhe o maior, não importa a ordem de cadastro
   const produtoMaisCaro = produtos.reduce((maior, atual) => {
@@ -36,7 +36,7 @@ function atualizarPainel() {
   }, null);
 
   // .reduce() para calcular o patrimônio total em estoque
-  const valorTotalPatrimonio = produtos.reduce(
+  const valorTotalPatrimonio = listaParaExibir.reduce(
     (acumulador, p) => acumulador + p.preco * p.estoque,
     0,
   );
@@ -58,9 +58,9 @@ function atualizarPainel() {
   const tbody = document.getElementById("linhas-produtos");
   if (!tbody) return;
 
-  const arrayDeLinhasHTML = produtos.map(
+  const arrayDeLinhasHTML = listaParaExibir.map(
     ({ id, nome, categoria, preco, estoque }) => {
-      const temEstoque = estoque > 0;
+      // const temEstoque = estoque > 0;
       const precoNumerico = Number(preco);
       return `
       <tr>
@@ -227,5 +227,17 @@ async function excluirProduto(idAlvo) {
     }
   }
 }
+
+// O evento 'input' dispara a cada letra que o usuário digita ou apaga
+document.getElementById("campo-busca").addEventListener("input", function (e) {
+  const termoBuscado = e.target.value.toLowerCase().trim();
+
+  const produtosFiltrados = produtos.filter((produto) =>
+    produto.nome.toLowerCase().includes(termoBuscado),
+  );
+
+  // Redesenha a tabela exibindo apenas os produtos correspondentes
+  atualizarPainel(produtosFiltrados);
+});
 
 carregarProdutos();
