@@ -232,6 +232,7 @@ async function excluirProduto(idAlvo) {
 document.getElementById("campo-busca").addEventListener("input", function (e) {
   const termoBuscado = e.target.value.toLowerCase().trim();
 
+  // Usamos .filter() para filtrar os produtos com base no texto digitado
   const produtosFiltrados = produtos.filter((produto) =>
     produto.nome.toLowerCase().includes(termoBuscado),
   );
