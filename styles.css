@@ -146,20 +146,6 @@ select {
   width: 100%;
 }
 
-.canvas {
-  /* max-height: 400px;
-  width: 100%; */
-}
-
-/* Canpo de Busca */
-.busca-produto {
-  /* margin-bottom: 20px; */
-}
-
-.campo-busca {
-  /* padding: 12px; */
-}
-
 /* Estilos da Tabela */
 .tabela-container {
   background-color: #fff;
