@@ -87,6 +87,7 @@ select {
 }
 
 .btn-cancelar {
+  display: none;
   margin-top: 10px;
   background-color: #dc3545;
 }
