@@ -1,3 +1,4 @@
+/* Configurações Globais e Resets */
 * {
   margin: 0;
   padding: 0;
@@ -6,20 +7,34 @@
 
 /* Estilização básica (CSS) para organizar o layout */
 body {
-  font-family: "Segoe UI", sans-serif;
-  margin: 40px;
+  font-family:
+    "Segoe UI",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  /* margin: 40px; */
   background-color: #f4f7f6;
   color: #333;
+  padding: 15px;
+  line-height: 1.5;
 }
 
 .container {
-  max-width: 1000px;
+  max-width: 1100px;
   margin: 0 auto;
+  width: 100%;
 }
 
 h1,
 h2 {
-  margin-bottom: 10px;
+  margin: 20px 0 10px 0;
+  font-size: 1.5rem;
+}
+
+h1 {
+  font-size: 1.8rem;
+  text-align: center;
+  margin-top: 10px;
 }
 
 /* Estilos do Formulário */
@@ -28,58 +43,57 @@ form {
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  margin-bottom: 30px;
+  margin-bottom: 26px;
   display: flex;
   gap: 16px;
-  flex-wrap: wrap;
-  align-items: flex-end;
+  flex-direction: column;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  flex: 1;
-  min-width: 150px;
+  width: 100%;
 }
 
 input,
 select {
-  padding: 10px;
+  padding: 12px;
   border: 1px solid #ccc;
-  border-radius: 4px;
-  /* font-size: 14px; */
-  font-size: 0.9rem;
+  border-radius: 6px;
+  /* font-size: 16px; */
+  font-size: 1rem;
+  width: 100%;
+  -webkit-appearance: none;
+}
+
+.btn-cadastrar,
+.btn-cancelar {
+  color: #fff;
+  border: none;
+  padding: 14px;
+  cursor: pointer;
+  border-radius: 6px;
+  font-weight: bold;
+  /* font-size: 16px; */
+  font-size: 1rem;
+  width: 100%;
+  opacity: 0.9;
 }
 
 .btn-cadastrar {
   background-color: #007bff;
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-  border-radius: 4px;
-  font-weight: bold;
-  /* font-size: 14px; */
-  /* font-size: 0.9rem; */
-  opacity: 0.9;
+  margin-top: 6px;
+}
+
+.btn-cancelar {
+  margin-top: 10px;
+  background-color: #dc3545;
 }
 
 .btn-cadastrar:hover,
 .btn-cancelar:hover {
   opacity: 1;
-}
-
-.btn-cancelar {
-  display: none;
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-  border-radius: 4px;
-  font-weight: bold;
-  opacity: 0.9;
 }
 
 /* Estilos dos Cards de Destaque */
