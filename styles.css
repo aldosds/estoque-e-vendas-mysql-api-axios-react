@@ -161,14 +161,20 @@ select {
 }
 
 /* Estilos da Tabela */
+.tabela-container {
+  background-color: #fff;
+  width: 100%;
+  overflow-x: auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  margin-bottom: 30px;
+}
+
 table {
   background-color: #fff;
   width: 100%;
   border-collapse: collapse;
-  margin-top: 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  border-radius: 8px;
-  overflow: hidden;
+  min-width: 600px;
 }
 
 th,
@@ -176,6 +182,8 @@ td {
   padding: 12px;
   text-align: left;
   border-bottom: 1px solid #ddd;
+  /* font-size: 14px; */
+  font-size: 0.9rem;
 }
 
 th {
@@ -190,9 +198,14 @@ tr:hover {
   background-color: #f8f9fa;
 }
 
-.total-row {
+.btn-acoes-container {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.btn-acoes-container button {
   font-weight: bold;
-  background-color: #e9ecef;
 }
 
 .btn-vender {
@@ -202,7 +215,9 @@ tr:hover {
   padding: 6px 12px;
   cursor: pointer;
   border-radius: 4px;
-  font-weight: bold;
+  /* font-size: 13px; */
+  font-size: 0.8rem;
+  width: 64px;
 }
 
 .btn-editar {
@@ -212,7 +227,9 @@ tr:hover {
   padding: 6px 12px;
   cursor: pointer;
   border-radius: 4px;
-  margin-left: 5px;
+  /* font-size: 13px; */
+  font-size: 0.8rem;
+  width: 64px;
 }
 
 .btn-excluir {
@@ -222,12 +239,15 @@ tr:hover {
   padding: 6px 12px;
   cursor: pointer;
   border-radius: 4px;
-  margin-left: 5px;
+  /* font-size: 13px; */
+  font-size: 0.8rem;
+  width: 64px;
 }
 
 button:disabled {
   background-color: #9aa8a9 !important;
   cursor: not-allowed;
+  opacity: 0.7;
 }
 
 .badge-esgotado {
@@ -238,4 +258,9 @@ button:disabled {
   border-radius: 4px;
   /* font-size: 12px; */
   font-size: 0.8rem;
+}
+
+.total-row {
+  font-weight: bold;
+  background-color: #e9ecef;
 }
