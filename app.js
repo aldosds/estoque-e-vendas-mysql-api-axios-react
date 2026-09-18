@@ -4,6 +4,9 @@ const API_URL = "http://localhost:3000/api/produtos";
 // Variável global que armazenará os produtos vindos do MySQL
 let produtos = [];
 
+// Guarda a instância do gráfico para podermos destruí-lo/recriá-lo ao atualizar dados
+let meuGrafico = null;
+
 // Carrega os dados do banco de dados (API) assim que abre a página
 async function carregarProdutos() {
   try {
@@ -93,6 +96,9 @@ function atualizarPainel(listaParaExibir = produtos) {
     `;
 
   tbody.innerHTML = htmlFinal;
+
+  // Para atualizar o grasfico
+  atualizarGrafico(listaParaExibir);
 }
 
 // EXECUTAR VENDA (MÉTODO PUT RAPIDO)
@@ -240,5 +246,72 @@ document.getElementById("campo-busca").addEventListener("input", function (e) {
   // Redesenha a tabela exibindo apenas os produtos correspondentes
   atualizarPainel(produtosFiltrados);
 });
+
+// Atualizar Gráfico
+function atualizarGrafico(dadosParaOGrafico = produtos) {
+  // Se por acaso a biblioteca não carregar, evita travar a tabela inteira
+  if (typeof Chart === "undefined") {
+    console.warn("Aviso: A biblioteca Chart.js ainda não foi carregada.");
+    alert("O Gráfico Dinamico não está podendo ser exibido.");
+    return;
+  }
+
+  const ctx = document.getElementById("grafico-produtos").getContext("2d");
+
+  // Destrói o gráfico anterior se ele já existir (evita sobreposição visual ao atualizar a tela)
+  if (meuGrafico) {
+    meuGrafico.destroy();
+  }
+
+  // APRENDIZADO APLICADO: Usamos .map() para extrair arrays simples contendo apenas o que o gráfico precisa
+  const nomes = dadosParaOGrafico.map((p) => p.nome);
+  const estoques = dadosParaOGrafico.map((p) => p.estoque);
+  const precos = dadosParaOGrafico.map((p) => Number(p.preco));
+
+  // Inicializa o Chart.js com as configurações de eixos e barras
+  meuGrafico = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: nomes, // Eixo X: Nomes dos produtos
+      datasets: [
+        {
+          label: "Quantidade em Estoque",
+          data: estoques,
+          backgroundColor: "rgba(40, 167, 69, 0.7)", // Verde
+          borderColor: "rgb(40, 167, 69)",
+          borderWidth: 1,
+          yAxisID: "y", // Vincula ao eixo Y da esquerda
+        },
+        {
+          label: "Preço (R$)",
+          data: precos,
+          backgroundColor: "rgba(0, 123, 255, 0.7)", // Azul
+          borderColor: "rgb(0, 123, 255)",
+          borderWidth: 1,
+          yAxisID: "y1", // Vincula ao eixo Y da direita (escala monetária)
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          type: "linear",
+          display: true,
+          position: "left",
+          title: { display: true, text: "Quantidade (Unidades)" },
+        },
+        y1: {
+          type: "linear",
+          display: true,
+          position: "right",
+          title: { display: true, text: "Preço (R$)" },
+          grid: { drawOnChartArea: false }, // Evita poluição de linhas cruzadas
+        },
+      },
+    },
+  });
+}
 
 carregarProdutos();
