@@ -63,25 +63,27 @@ function atualizarPainel(listaParaExibir = produtos) {
 
   const arrayDeLinhasHTML = listaParaExibir.map(
     ({ id, nome, categoria, preco, estoque }) => {
-      // const temEstoque = estoque > 0;
+      const temEstoque = estoque > 0;
       const precoNumerico = Number(preco);
       return `
       <tr>
-      <td>${id}</td>
+        <td>${id}</td>
         <td><strong>${nome}</strong></td>
         <td>${categoria}</td>
         <td>R$ ${precoNumerico.toFixed(2)}</td>
-        <td>${estoque <= 0 ? `<span class="badge-esgotado">Esgotado</span>` : estoque}</td>
+        <td>${temEstoque ? estoque : `<span class="badge-esgotado">Esgotado</span>`}</td>
         <td>
-        <button class="btn-vender" ${estoque <= 0 ? "disabled" : ""} onclick="executarVenda(${id})">
-        ${estoque <= 0 ? "Acabou" : "Vender"}
-          </button>
-          <button class="btn-editar" onclick="prepararEdicao(${id})">Editar</button>
-          <button class="btn-excluir" ${estoque > 0 ? "disabled" : ""} onclick="excluirProduto(${id})">
-          ${estoque <= 0 ? "Excluir" : "Inativo"}
-          </button>
-          </td>
-          </tr>
+          <div class="btn-acoes-container">
+            <button class="btn-vender" ${!temEstoque ? "disabled" : ""} onclick="executarVenda(${id}, ${estoque})">
+              ${!temEstoque ? "Acabou" : "Vender"}
+            </button>
+            <button class="btn-editar" onclick="prepararEdicao(${id})">Editar</button>
+            <button class="btn-excluir" ${temEstoque ? "disabled" : ""}  onclick="excluirProduto(${id})">
+              ${!temEstoque ? "Excluir" : "Inativo"}
+            </button>
+          </div>
+        </td>
+      </tr>
           `;
     },
   );
@@ -90,8 +92,8 @@ function atualizarPainel(listaParaExibir = produtos) {
   // Injeta a linha final do rodapé calculada pelo .reduce()
   htmlFinal += `
     <tr class="total-row">
-    <td colspan="3" style="text-align: right;">Patrimônio Total em Estoque:</td>
-    <td colspan="3">R$ ${valorTotalPatrimonio.toFixed(2)}</td>
+      <td colspan="3" style="text-align: right;">Patrimônio Total em Estoque:</td>
+      <td colspan="3">R$ ${valorTotalPatrimonio.toFixed(2)}</td>
     </tr>
     `;
 
