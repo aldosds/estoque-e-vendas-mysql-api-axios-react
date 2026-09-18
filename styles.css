@@ -153,11 +153,11 @@ select {
 
 /* Canpo de Busca */
 .busca-produto {
-  margin-bottom: 20px;
+  /* margin-bottom: 20px; */
 }
 
 .campo-busca {
-  padding: 12px;
+  /* padding: 12px; */
 }
 
 /* Estilos da Tabela */
