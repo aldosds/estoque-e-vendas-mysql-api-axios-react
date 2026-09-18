@@ -118,6 +118,20 @@ select {
   margin-top: 6px;
 }
 
+/* Gráfico */
+.grafico {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  margin-bottom: 30px;
+}
+
+.canvas {
+  max-height: 400px;
+  width: 100%;
+}
+
 /* Canpo de Busca */
 .busca-produto {
   margin-bottom: 20px;
