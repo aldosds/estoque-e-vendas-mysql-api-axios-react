@@ -60,6 +60,27 @@
         id="busca-venda"
         placeholder="Filtrar venda pelo nome do produto..."
       />
+
+      <h2>Registros das Vendas</h2>
+      <div class="tabela-container">
+        <table>
+          <thead>
+            <tr>
+              <th>ID Venda</th>
+              <th>Produto</th>
+              <th>Qtd</th>
+              <th>Preço Unitário</th>
+              <th>Valor Total</th>
+              <th>Data/Hora</th>
+              <th>Ação</th>
+            </tr>
+          </thead>
+          <tbody id="linhas-vendas"></tbody>
+        </table>
+      </div>
     </div>
+
+    <!-- Scripts -->
+    <script src="vendas.js"></script>
   </body>
 </html>
