@@ -71,6 +71,131 @@ app.delete("/api/produtos/:id", (req, res) => {
   });
 });
 
+// ==========================================
+// ROTAS DE VENDAS
+// ==========================================
+
+// Listar vendas trazendo o nome do produto através de um INNER JOIN
+app.get("/api/vendas", (req, res) => {
+  const sql = `
+    SELECT v.*, p.nome AS produto_nome 
+    FROM vendas v 
+    INNER JOIN produtos p ON v.produto_id = p.id
+    ORDER BY v.data_venda DESC
+  `;
+  db.query(sql, (err, resultados) => {
+    if (err) return res.status(500).json({ erro: err.message });
+    res.json(resultados);
+  });
+});
+
+// Registrar Venda (Dá baixa no estoque do produto e insere no histórico)
+app.post("/api/vendas", (req, res) => {
+  const { produto_id, quantidade, preco_unitario } = req.body;
+  const valor_total = quantidade * preco_unitario;
+
+  // Verifica estoque primeiro
+  db.query(
+    "SELECT estoque FROM produtos WHERE id = ?",
+    [produto_id],
+    (err, rows) => {
+      if (err) return res.status(500).json({ erro: err.message });
+      if (rows.length === 0 || rows[0].estoque < quantidade) {
+        return res.status(400).json({ erro: "Estoque insuficiente!" });
+      }
+
+      // Inicia transação para garantir consistência
+      db.beginTransaction((tErr) => {
+        if (tErr) return res.status(500).json({ erro: tErr.message });
+
+        // 1. Insere o registro da venda
+        const sqlVenda =
+          "INSERT INTO vendas (produto_id, quantidade, preco_unitario, valor_total) VALUES (?, ?, ?, ?)";
+        db.query(
+          sqlVenda,
+          [produto_id, quantity, preco_unitario, valor_total],
+          (vErr, vResult) => {
+            if (vErr)
+              return db.rollback(() =>
+                res.status(500).json({ erro: vErr.message }),
+              );
+
+            // 2. Atualiza o estoque do produto decrementando a quantidade
+            const sqlEstoque =
+              "UPDATE produtos SET estoque = estoque - ? WHERE id = ?";
+            db.query(sqlEstoque, [quantidade, produto_id], (eErr) => {
+              if (eErr)
+                return db.rollback(() =>
+                  res.status(500).json({ erro: eErr.message }),
+                );
+
+              db.commit((cErr) => {
+                if (cErr)
+                  return db.rollback(() =>
+                    res.status(500).json({ erro: cErr.message }),
+                  );
+                res.json({
+                  id: vResult.insertId,
+                  mensagem: "Venda registrada!",
+                });
+              });
+            });
+          },
+        );
+      });
+    },
+  );
+});
+
+// Excluir Venda (Estorna os itens de volta para o estoque do produto)
+app.delete("/api/vendas/:id", (req, res) => {
+  const { id } = req.params;
+
+  db.query(
+    "SELECT produto_id, quantidade FROM vendas WHERE id = ?",
+    [id],
+    (err, rows) => {
+      if (err) return res.status(500).json({ erro: err.message });
+      if (rows.length === 0)
+        return res.status(404).json({ erro: "Venda não encontrada!" });
+
+      const { produto_id, quantidade } = rows[0];
+
+      db.beginTransaction((tErr) => {
+        if (tErr) return res.status(500).json({ erro: tErr.message });
+
+        // 1. Devolve a quantidade ao estoque do produto
+        db.query(
+          "UPDATE produtos SET estoque = estoque + ? WHERE id = ?",
+          [quantidade, produto_id],
+          (eErr) => {
+            if (eErr)
+              return db.rollback(() =>
+                res.status(500).json({ erro: eErr.message }),
+              );
+
+            // 2. Deleta a venda
+            db.query("DELETE FROM vendas WHERE id = ?", [id], (dErr) => {
+              if (dErr)
+                return db.rollback(() =>
+                  res.status(500).json({ erro: dErr.message }),
+                );
+
+              db.commit((cErr) => {
+                if (cErr)
+                  return db.rollback(() =>
+                    res.status(500).json({ erro: cErr.message }),
+                  );
+                res.json({ mensagem: "Venda cancelada e estoque estornado!" });
+              });
+            });
+          },
+        );
+      });
+    },
+  );
+});
+
 // Inicializa o servidor na porta 3000
 app.listen(3000, () => {
   console.log("🖥️ Servidor rodando em http://localhost:3000");
