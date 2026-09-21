@@ -1,5 +1,6 @@
 // Carrega as variáveis de ambiente do arquivo .env
-require("dotenv").config();
+import dotenv from "dotenv";
+dotenv.config();
 
 import express from "express";
 import mysql from "mysql2";
