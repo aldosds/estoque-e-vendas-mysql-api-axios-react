@@ -114,7 +114,7 @@ app.post("/api/vendas", (req, res) => {
           "INSERT INTO vendas (produto_id, quantidade, preco_unitario, valor_total) VALUES (?, ?, ?, ?)";
         db.query(
           sqlVenda,
-          [produto_id, quantity, preco_unitario, valor_total],
+          [produto_id, quantidade, preco_unitario, valor_total],
           (vErr, vResult) => {
             if (vErr)
               return db.rollback(() =>
