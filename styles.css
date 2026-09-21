@@ -37,6 +37,25 @@ h1 {
   margin-top: 10px;
 }
 
+/* Estilização dos links */
+.links-container {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.lik-produtos {
+  margin-right: 15px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #007bff;
+}
+
+.link-vendas {
+  font-weight: bold;
+  text-decoration: none;
+  color: #6c757d;
+}
+
 /* Estilos do Formulário */
 form {
   background: #fff;
