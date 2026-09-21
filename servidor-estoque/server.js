@@ -33,51 +33,41 @@ db.connect((erro) => {
 
 // ROTA 1: Listar todos os produtos (Acessada pelo HTML ao carregar a página)
 app.get("/api/produtos", (req, res) => {
-  const querySQL = "SELECT * FROM produtos";
-
-  db.query(querySQL, (erro, resultados) => {
-    if (erro) return res.status(500).json({ erro: erro.message });
-    res.json(resultados); // Retorna o array de objetos para o Front-end
+  db.query("SELECT * FROM produtos", (err, result) => {
+    if (err) return res.status(500).json({ erro: err.message });
+    res.json(result);
   });
 });
 
 // ROTA 2: Cadastrar um novo produto (Recebe os dados do formulário)
 app.post("/api/produtos", (req, res) => {
-  // Usamos Desestruturação de Objeto para capturar os dados enviados pelo HTML
   const { nome, categoria, preco, estoque } = req.body;
-
-  // O ponto de interrogação (?) evita ataques de injeção SQL, tornando o código seguro
-  const querySQL =
+  const sql =
     "INSERT INTO produtos (nome, categoria, preco, estoque) VALUES (?, ?, ?, ?)";
-
-  db.query(querySQL, [nome, categoria, preco, estoque], (erro, resultado) => {
-    if (erro) return res.status(500).json({ erro: erro.message });
-    res.json({ id: resultado.insertId, nome, categoria, preco, estoque });
+  db.query(sql, [nome, categoria, preco, estoque], (err, result) => {
+    if (err) return res.status(500).json({ erro: err.message });
+    res.json({ id: result.insertId, nome, categoria, preco, estoque });
   });
 });
 
 // ROTA 3: Editar um produto existente (Recebe o ID pela URL e os dados no corpo)
 app.put("/api/produtos/:id", (req, res) => {
-  const { id } = req.params; // Captura o ID enviado na URL (ex: /api/produtos/2)
+  const { id } = req.params;
   const { nome, categoria, preco, estoque } = req.body;
-
-  const querySQL =
+  const sql =
     "UPDATE produtos SET nome = ?, categoria = ?, preco = ?, estoque = ? WHERE id = ?";
-
-  db.query(querySQL, [nome, categoria, preco, estoque, id], (erro) => {
-    if (erro) return res.status(500).json({ erro: erro.message });
-    res.json({ mensagem: "Produto atualizado com sucesso!" });
+  db.query(sql, [nome, categoria, preco, estoque, id], (err) => {
+    if (err) return res.status(500).json({ erro: err.message });
+    res.json({ mensagem: "Produto atualizado!" });
   });
 });
 
 // ROTA 4: Excluir um produto
 app.delete("/api/produtos/:id", (req, res) => {
   const { id } = req.params;
-  const querySQL = "DELETE FROM produtos WHERE id = ?";
-
-  db.query(querySQL, [id], (erro) => {
-    if (erro) return res.status(500).json({ erro: erro.message });
-    res.json({ mensagem: "Produto excluído do MySQL!" });
+  db.query("DELETE FROM produtos WHERE id = ?", [id], (err) => {
+    if (err) return res.status(500).json({ erro: err.message });
+    res.json({ mensagem: "Produto removido!" });
   });
 });
 
