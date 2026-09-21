@@ -1,5 +1,5 @@
-// Configuração da URL base da API do servidor Node.js
-const API_URL = "http://localhost:3000/api/produtos";
+// Configuração da instância base do Axios
+const api = axios.create({ baseURL: "http://localhost:3000/api" });
 
 // Variável global que armazenará os produtos vindos do MySQL
 let produtos = [];
@@ -7,24 +7,21 @@ let produtos = [];
 // Guarda a instância do gráfico para podermos destruí-lo/recriá-lo ao atualizar dados
 let meuGrafico = null;
 
-// Carrega os dados do banco de dados (API) assim que abre a página
+// 1. CARREGAR PRODUTOS (MÉTODO GET)
 async function carregarProdutos() {
   try {
-    const resposta = await fetch(API_URL);
-
-    if (!resposta.ok) throw new Error("Erro ao buscar dados do servidor.");
-
-    // Alimenta nossa variável global com o array de objetos (JSON) vindo do MySQL
-    produtos = await resposta.json();
+    const resposta = await api.get("/produtos");
+    produtos = resposta.data; // O dado bruto já vem mapeado em .data pelo Axios vindo do MySQL!
 
     // Atualiza toda a interface visual
     atualizarPainel();
-  } catch (error) {
-    console.error("Erro ao buscar dados do MySQL:", error);
-    alert("Não foi possível carregar os produtos do banco de dados.");
+  } catch (erro) {
+    console.error("Erro ao buscar dados do MySQL:", erro);
+    alert(
+      "Não foi possível carregar os produtos do banco de dados. O servidor está rodando?",
+    );
   }
 }
-
 // Função de Renderização e Atualização da Interface (MÉTODOS DE ARRAY: REDUCE e MAP + DESESTRUTURAÇÃO)
 function atualizarPainel(listaParaExibir = produtos) {
   // .reduce() para encontrar o produto mais caro dinamicamente
@@ -103,26 +100,22 @@ function atualizarPainel(listaParaExibir = produtos) {
   atualizarGrafico(listaParaExibir);
 }
 
-// EXECUTAR VENDA (MÉTODO PUT RAPIDO)
-// OPERADOR REST (...) para Alteração Imutável
+/// AÇÃO DE VENDA: Agora se conecta à API de Vendas (POST)
 async function executarVenda(idAlvo, estoqueAtual) {
   const produto = produtos.find((p) => p.id === idAlvo);
   if (!produto) return;
 
-  // Desestruturação + Rest para atualizar apenas o estoque imutavelmente antes do envio
-  const { estoque, ...resto } = produto;
-  const dadosAtualizados = { ...resto, estoque: estoque - 1 };
-
   try {
-    const resposta = await fetch(`${API_URL}/${idAlvo}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(dadosAtualizados),
+    // Dispara a criação do registro de venda no banco
+    await api.post("/vendas", {
+      produto_id: idAlvo,
+      quantidade: 1,
+      preco_unitario: produto.preco,
     });
-    if (!resposta.ok) throw new Error();
-    carregarProdutos();
+
+    carregarProdutos(); // Recarrega para ver o estoque atualizado
   } catch (erro) {
-    alert("Erro ao processar venda.");
+    alert(erro.response?.data?.erro || "Erro ao processar venda.");
   }
 }
 
@@ -160,63 +153,37 @@ document
   .getElementById("form-produto")
   .addEventListener("submit", async function (e) {
     e.preventDefault();
-
     const id = document.getElementById("produto-id").value;
     const nome = document.getElementById("nome").value.trim();
     const categoria = document.getElementById("categoria").value;
     const preco = parseFloat(document.getElementById("preco").value);
     const estoque = parseInt(document.getElementById("estoque").value);
 
-    // Validação preventiva de nome duplicado na memória local atual do painel
-    const duplicado = produtos.some(
-      (p) => p.nome.toLowerCase() === nome.toLowerCase() && p.id !== Number(id),
-    );
-
-    if (duplicado) {
-      alert("Esse nome de produto já existe!");
+    if (
+      produtos.some(
+        (p) =>
+          p.nome.toLowerCase() === nome.toLowerCase() && p.id !== Number(id),
+      )
+    ) {
+      alert("Nome duplicado!");
       return;
     }
 
-    // Prepara o objeto com os dados para enviar ao Back-end (Sem o ID, que o banco gera sozinho no cadastro)
-    const dadosProduto = { nome, categoria, preco, estoque };
+    const dados = { nome, categoria, preco, estoque };
 
     try {
       if (id) {
-        // MODO EDIÇÃO: Atualiza um registro existente (Rota PUT)
-        const resposta = await fetch(`${API_URL}/${id}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json", // Avisa o Node que estamos enviando um JSON
-          },
-          body: JSON.stringify(dadosProduto),
-        });
-
-        if (!resposta.ok) throw new Error("Erro ao atualizar produto.");
-
-        alert("Produto atualizado com sucesso!");
-
-        cancelarEdicao(); // Limpa os campos e reseta o título do formulário
+        await api.put(`/produtos/${id}`, dados);
+        alert("Produto atualizado!");
+        cancelarEdicao();
       } else {
-        // MODO CADASTRO: Cria um novo registro (Rota POST)
-        const resposta = await fetch(API_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(dadosProduto),
-        });
-
-        if (!resposta.ok) throw new Error("Erro ao cadastrar produto.");
-
-        alert("Produto cadastrado com sucesso no MySQL!");
+        await api.post("/produtos", dados);
+        alert("Produto cadastrado!");
         document.getElementById("form-produto").reset();
       }
-
-      // Solicita ao servidor a lista renovada de produtos para atualizar a tabela na tela
       carregarProdutos();
-    } catch (error) {
-      console.error("Erro na operação de salvamento:", error);
-      alert("Falha na comunicação. O registro não foi salvo.");
+    } catch (erro) {
+      alert("Falha ao salvar produto.");
     }
   });
 
@@ -225,11 +192,7 @@ async function excluirProduto(idAlvo) {
   if (confirm("Tem certeza que deseja excluir este produto?")) {
     try {
       // Faz a chamada para a rota DELETE do servidor Node.js
-      const resposta = await fetch(`${API_URL}/${idAlvo}`, {
-        method: "DELETE",
-      });
-
-      if (!resposta.ok) throw new Error("Erro ao excluir.");
+      await api.delete(`/produtos/${idAlvo}`);
 
       // Após deletar no banco com sucesso, recarrega a lista atualizada
       alert("Produto removido com sucesso!");
