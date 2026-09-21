@@ -140,6 +140,11 @@ function prepararEdicao(idAlvo) {
   document.getElementById("titulo-form").innerText = "Editar Produto";
   document.getElementById("btn-submit").innerText = "Salvar Alterações";
   document.getElementById("btn-cancelar").style.display = "inline-block";
+
+  // Seleciona o formulário e faz a tela rolar até ele de forma suave (smooth)
+  document
+    .getElementById("form-produto")
+    .scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 function cancelarEdicao() {
