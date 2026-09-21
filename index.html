@@ -4,6 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+    <!-- Importação do Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.20.0/axios.min.js"></script> -->
+
     <!-- Importação do Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -15,6 +19,24 @@
   <body>
     <div class="container">
       <h1>Gerenciador de Estoque e Vendas</h1>
+
+      <div style="text-align: center; margin-bottom: 20px">
+        <a
+          href="index.html"
+          style="
+            margin-right: 15px;
+            font-weight: bold;
+            text-decoration: none;
+            color: #007bff;
+          "
+          >📦 Produtos</a
+        >
+        <a
+          href="vendas.html"
+          style="font-weight: bold; text-decoration: none; color: #6c757d"
+          >💰 Histórico de Vendas</a
+        >
+      </div>
 
       <!-- Form de Cadastro: Captura de novos dados -->
       <h2 id="titulo-form">Cadastrar Novo Produto</h2>
