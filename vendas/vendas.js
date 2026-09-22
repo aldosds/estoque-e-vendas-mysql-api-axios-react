@@ -58,5 +58,67 @@ function renderizarPainelVendas(listaVendas = vendas) {
   atualizarGraficoVendas(listaVendas);
 }
 
+// 3. .reduce() Avançado: Agrupar faturamento por nome do produto para o gráfico
+function atualizarGraficoVendas(dadosVendas) {
+  const ctx = document.getElementById("graficoVendas").getContext("2d");
+  if (graficoVendasInstance) graficoVendasInstance.destroy();
+
+  // Consolida os valores acumulados por produto
+  const faturamentoPorProduto = dadosVendas.reduce((acc, v) => {
+    acc[v.produto_nome] = (acc[v.produto_nome] || 0) + Number(v.valor_total);
+    return acc;
+  }, {});
+
+  const labels = Object.keys(faturamentoPorProduto);
+  const valores = Object.values(faturamentoPorProduto);
+
+  graficoVendasInstance = new Chart(ctx, {
+    type: "pie", // Gráfico de Pizza/Setores para faturamento proporcional
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: "Faturamento Total (R$)",
+          data: valores,
+          backgroundColor: [
+            "#4caf50",
+            "#2196f3",
+            "#ff9800",
+            "#9c27b0",
+            "#e91e63",
+          ],
+        },
+      ],
+    },
+    options: { responsive: true, maintainAspectRatio: false },
+  });
+}
+
+// DELETE: Cancelar venda e devolver itens ao estoque (Transação segura no Back)
+async function estornarVenda(idVenda) {
+  if (
+    confirm(
+      "Deseja cancelar esta venda? O estoque correspondente será devolvido.",
+    )
+  ) {
+    try {
+      await api.delete(`/vendas/${idVenda}`);
+      alert("Venda estornada com sucesso!");
+      carregarVendas();
+    } catch (error) {
+      alert("Erro ao estornar a venda.");
+    }
+  }
+}
+
+// .filter() + .includes() na barra de pesquisa por digitação
+document.getElementById("busca-venda").addEventListener("input", function (e) {
+  const termo = e.target.value.toLowerCase().trim();
+  const filtradas = vendas.filter((v) =>
+    v.produto_nome.toLowerCase().includes(termo),
+  );
+  renderizarPainelVendas(filtradas);
+});
+
 // Inicialização
 carregarVendas();
