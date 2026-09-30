@@ -87,7 +87,11 @@ app.post("/api/auth/login", (req, res) => {
   const { email, senha } = req.body;
 
   db.query(
-    "SELECT * FROM usuarios WHERE email = ?",
+    `SELECT u.*, n.nome AS nivel_nome 
+     FROM usuarios u 
+     INNER JOIN niveis_acesso n ON u.nivel_acesso_id = n.id 
+     WHERE u.email = ?`,
+
     [email],
     async (err, resultados) => {
       if (err) return res.status(500).json({ erro: err.message });
@@ -117,6 +121,7 @@ app.post("/api/auth/login", (req, res) => {
 // ==========================================
 // 📦 ROTAS DE PRODUTOS (PROTEGIDAS)
 // ==========================================
+// ROTA 1: Listar todos os produtos (Acessada pelo HTML ao carregar a página)
 app.get("/api/produtos", verificarToken, (req, res) => {
   db.query("SELECT * FROM produtos", (err, result) => {
     if (err) return res.status(500).json({ erro: err.message });
@@ -124,6 +129,7 @@ app.get("/api/produtos", verificarToken, (req, res) => {
   });
 });
 
+// ROTA 2: Cadastrar um novo produto (Recebe os dados do formulário)
 app.post("/api/produtos", verificarToken, (req, res) => {
   // 🔒 Bloqueio de segurança no servidor: Se não for admin, impede o INSERT
   if (req.usuarioLogado.nivel !== "admin") {
@@ -140,6 +146,7 @@ app.post("/api/produtos", verificarToken, (req, res) => {
   });
 });
 
+// ROTA 3: Editar um produto existente (Recebe o ID pela URL e os dados no corpo)
 app.put("/api/produtos/:id", verificarToken, (req, res) => {
   if (req.usuarioLogado.nivel !== "admin") {
     return res
@@ -156,6 +163,7 @@ app.put("/api/produtos/:id", verificarToken, (req, res) => {
   });
 });
 
+// ROTA 4: Excluir um produto
 app.delete("/api/produtos/:id", verificarToken, (req, res) => {
   if (req.usuarioLogado.nivel !== "admin") {
     return res
@@ -172,6 +180,7 @@ app.delete("/api/produtos/:id", verificarToken, (req, res) => {
 // ==========================================
 // 💰 ROTAS DE VENDAS (PROTEGIDAS)
 // ==========================================
+// Listar vendas trazendo o nome do produto através de um INNER JOIN
 app.get("/api/vendas", verificarToken, (req, res) => {
   const sql = `
     SELECT v.*, p.nome AS produto_nome 
@@ -185,10 +194,12 @@ app.get("/api/vendas", verificarToken, (req, res) => {
   });
 });
 
+// Registrar Venda (Dá baixa no estoque do produto e insere no histórico)
 app.post("/api/vendas", verificarToken, (req, res) => {
   const { produto_id, quantidade, preco_unitario } = req.body;
   const valor_total = quantidade * preco_unitario;
 
+  // Verifica estoque primeiro
   db.query(
     "SELECT estoque FROM produtos WHERE id = ?",
     [produto_id],
@@ -198,9 +209,11 @@ app.post("/api/vendas", verificarToken, (req, res) => {
         return res.status(400).json({ erro: "Estoque insuficiente!" });
       }
 
+      // Inicia transação para garantir consistência
       db.beginTransaction((tErr) => {
         if (tErr) return res.status(500).json({ erro: tErr.message });
 
+        // 1. Insere o registro da venda
         const sqlVenda =
           "INSERT INTO vendas (produto_id, quantidade, preco_unitario, valor_total) VALUES (?, ?, ?, ?)";
         db.query(
@@ -212,6 +225,7 @@ app.post("/api/vendas", verificarToken, (req, res) => {
                 res.status(500).json({ erro: vErr.message }),
               );
 
+            // 2. Atualiza o estoque do produto decrementando a quantidade
             const sqlEstoque =
               "UPDATE produtos SET estoque = estoque - ? WHERE id = ?";
             db.query(sqlEstoque, [quantidade, produto_id], (eErr) => {
@@ -238,6 +252,7 @@ app.post("/api/vendas", verificarToken, (req, res) => {
   );
 });
 
+// Excluir Venda (Estorna os itens de volta para o estoque do produto)
 app.delete("/api/vendas/:id", verificarToken, (req, res) => {
   // 🔒 Bloqueio: Apenas administradores podem cancelar/estornar vendas arquivadas
   if (req.usuarioLogado.nivel !== "admin") {
@@ -260,6 +275,7 @@ app.delete("/api/vendas/:id", verificarToken, (req, res) => {
       db.beginTransaction((tErr) => {
         if (tErr) return res.status(500).json({ erro: tErr.message });
 
+        // 1. Devolve a quantidade ao estoque do produto
         db.query(
           "UPDATE produtos SET estoque = estoque + ? WHERE id = ?",
           [quantidade, produto_id],
@@ -269,6 +285,7 @@ app.delete("/api/vendas/:id", verificarToken, (req, res) => {
                 res.status(500).json({ erro: eErr.message }),
               );
 
+            // 2. Deleta a venda
             db.query("DELETE FROM vendas WHERE id = ?", [id], (dErr) => {
               if (dErr)
                 return db.rollback(() =>
