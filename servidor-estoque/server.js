@@ -6,11 +6,18 @@ import express from "express";
 import mysql from "mysql2";
 import cors from "cors";
 
+// Ferramentas de segurança
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+
 const app = express();
 
 // Middlewares obrigatórios
 app.use(cors());
 app.use(express.json()); // Permite que o Node entenda dados enviados no formato JSON
+
+// Chave secreta exclusiva para assinar criptograficamente os tokens JWT
+const JWT_SECRET = "minha_chave_secreta_super_protegida_2026";
 
 // 1. Configuração da Conexão com o MySQL
 const db = mysql.createConnection({
@@ -28,20 +35,102 @@ db.connect((erro) => {
   console.log("🚀 Conectado com sucesso ao Banco de Dados MySQL!");
 });
 
-// =============================================================
-// ROTAS DE COMUNICAÇÃO (API)
-// =============================================================
+// ==========================================
+// 🛡️ MIDDLEWARE DE AUTENTICAÇÃO (O GUARDA)
+// ==========================================
+function verificarToken(req, res, next) {
+  // Captura o token enviado no cabeçalho (Header) da requisição Axios
+  const token = req.headers["authorization"]?.split(" ")[1];
 
-// ROTA 1: Listar todos os produtos (Acessada pelo HTML ao carregar a página)
-app.get("/api/produtos", (req, res) => {
+  if (!token) {
+    return res
+      .status(401)
+      .json({ erro: "Acesso negado. Token não fornecido!" });
+  }
+
+  try {
+    // Valida se o token foi assinado pela nossa chave secreta e não foi adulterado
+    const dadosDecodificados = jwt.verify(token, JWT_SECRET);
+    req.usuarioLogado = dadosDecodificados; // Injeta os dados do usuário na requisição
+    next(); // Permite que a requisição siga para a rota original
+  } catch (erro) {
+    return res.status(403).json({ erro: "Token inválido ou expirado!" });
+  }
+}
+
+// ==========================================
+// 🔑 ROTAS DE AUTENTICAÇÃO
+// ==========================================
+
+// Rota de Cadastro de Usuários (Criptografa a senha antes de salvar)
+app.post("/api/auth/registrar", async (req, res) => {
+  const { nome, email, senha, nivel_acesso } = req.body;
+
+  try {
+    // Gera o 'salt' e encripta a senha usando algoritmo hash seguro (Bcrypt)
+    const salt = await bcrypt.genSalt(10);
+    const senhaCriptografada = await bcrypt.hash(senha, salt);
+
+    const sql =
+      "INSERT INTO usuarios (nome, email, senha, nivel_acesso) VALUES (?, ?, ?, ?)";
+    db.query(sql, [nome, email, senhaCriptografada, nivel_acesso], (err) => {
+      if (err) return res.status(400).json({ erro: "E-mail já cadastrado!" });
+      res.json({ mensagem: "Usuário registrado com sucesso!" });
+    });
+  } catch (err) {
+    res.status(500).json({ erro: err.message });
+  }
+});
+
+// Rota de Login (Gera o passaporte Token JWT se a senha bater)
+app.post("/api/auth/login", (req, res) => {
+  const { email, senha } = req.body;
+
+  db.query(
+    "SELECT * FROM usuarios WHERE email = ?",
+    [email],
+    async (err, resultados) => {
+      if (err) return res.status(500).json({ erro: err.message });
+      if (resultados.length === 0)
+        return res.status(400).json({ erro: "E-mail ou senha inválidos!" });
+
+      const usuario = resultados[0];
+
+      // Compara a senha digitada com o hash criptografado salvo no MySQL
+      const senhaCorreta = await bcrypt.compare(senha, usuario.senha);
+      if (!senhaCorreta)
+        return res.status(400).json({ erro: "E-mail ou senha inválidos!" });
+
+      // Gera o Token JWT contendo ID e nível de acesso, com validade de 2 horas
+      const token = jwt.sign(
+        { id: usuario.id, nivel: usuario.nivel_acesso, nome: usuario.nome },
+        JWT_SECRET,
+        { expiresIn: "2h" },
+      );
+
+      // Devolve o token e os dados públicos para o Front-end
+      res.json({ token, nome: usuario.nome, nivel: usuario.nivel_acesso });
+    },
+  );
+});
+
+// ==========================================
+// 📦 ROTAS DE PRODUTOS (PROTEGIDAS)
+// ==========================================
+app.get("/api/produtos", verificarToken, (req, res) => {
   db.query("SELECT * FROM produtos", (err, result) => {
     if (err) return res.status(500).json({ erro: err.message });
     res.json(result);
   });
 });
 
-// ROTA 2: Cadastrar um novo produto (Recebe os dados do formulário)
-app.post("/api/produtos", (req, res) => {
+app.post("/api/produtos", verificarToken, (req, res) => {
+  // 🔒 Bloqueio de segurança no servidor: Se não for admin, impede o INSERT
+  if (req.usuarioLogado.nivel !== "admin") {
+    return res
+      .status(403)
+      .json({ erro: "Apenas administradores podem cadastrar produtos!" });
+  }
   const { nome, categoria, preco, estoque } = req.body;
   const sql =
     "INSERT INTO produtos (nome, categoria, preco, estoque) VALUES (?, ?, ?, ?)";
@@ -51,8 +140,12 @@ app.post("/api/produtos", (req, res) => {
   });
 });
 
-// ROTA 3: Editar um produto existente (Recebe o ID pela URL e os dados no corpo)
-app.put("/api/produtos/:id", (req, res) => {
+app.put("/api/produtos/:id", verificarToken, (req, res) => {
+  if (req.usuarioLogado.nivel !== "admin") {
+    return res
+      .status(403)
+      .json({ erro: "Apenas administradores podem editar produtos!" });
+  }
   const { id } = req.params;
   const { nome, categoria, preco, estoque } = req.body;
   const sql =
@@ -63,8 +156,12 @@ app.put("/api/produtos/:id", (req, res) => {
   });
 });
 
-// ROTA 4: Excluir um produto
-app.delete("/api/produtos/:id", (req, res) => {
+app.delete("/api/produtos/:id", verificarToken, (req, res) => {
+  if (req.usuarioLogado.nivel !== "admin") {
+    return res
+      .status(403)
+      .json({ erro: "Apenas administradores podem excluir produtos!" });
+  }
   const { id } = req.params;
   db.query("DELETE FROM produtos WHERE id = ?", [id], (err) => {
     if (err) return res.status(500).json({ erro: err.message });
@@ -73,11 +170,9 @@ app.delete("/api/produtos/:id", (req, res) => {
 });
 
 // ==========================================
-// ROTAS DE VENDAS
+// 💰 ROTAS DE VENDAS (PROTEGIDAS)
 // ==========================================
-
-// Listar vendas trazendo o nome do produto através de um INNER JOIN
-app.get("/api/vendas", (req, res) => {
+app.get("/api/vendas", verificarToken, (req, res) => {
   const sql = `
     SELECT v.*, p.nome AS produto_nome 
     FROM vendas v 
@@ -90,12 +185,10 @@ app.get("/api/vendas", (req, res) => {
   });
 });
 
-// Registrar Venda (Dá baixa no estoque do produto e insere no histórico)
-app.post("/api/vendas", (req, res) => {
+app.post("/api/vendas", verificarToken, (req, res) => {
   const { produto_id, quantidade, preco_unitario } = req.body;
   const valor_total = quantidade * preco_unitario;
 
-  // Verifica estoque primeiro
   db.query(
     "SELECT estoque FROM produtos WHERE id = ?",
     [produto_id],
@@ -105,11 +198,9 @@ app.post("/api/vendas", (req, res) => {
         return res.status(400).json({ erro: "Estoque insuficiente!" });
       }
 
-      // Inicia transação para garantir consistência
       db.beginTransaction((tErr) => {
         if (tErr) return res.status(500).json({ erro: tErr.message });
 
-        // 1. Insere o registro da venda
         const sqlVenda =
           "INSERT INTO vendas (produto_id, quantidade, preco_unitario, valor_total) VALUES (?, ?, ?, ?)";
         db.query(
@@ -121,7 +212,6 @@ app.post("/api/vendas", (req, res) => {
                 res.status(500).json({ erro: vErr.message }),
               );
 
-            // 2. Atualiza o estoque do produto decrementando a quantidade
             const sqlEstoque =
               "UPDATE produtos SET estoque = estoque - ? WHERE id = ?";
             db.query(sqlEstoque, [quantidade, produto_id], (eErr) => {
@@ -148,8 +238,13 @@ app.post("/api/vendas", (req, res) => {
   );
 });
 
-// Excluir Venda (Estorna os itens de volta para o estoque do produto)
-app.delete("/api/vendas/:id", (req, res) => {
+app.delete("/api/vendas/:id", verificarToken, (req, res) => {
+  // 🔒 Bloqueio: Apenas administradores podem cancelar/estornar vendas arquivadas
+  if (req.usuarioLogado.nivel !== "admin") {
+    return res
+      .status(403)
+      .json({ erro: "Apenas administradores podem estornar vendas!" });
+  }
   const { id } = req.params;
 
   db.query(
@@ -165,7 +260,6 @@ app.delete("/api/vendas/:id", (req, res) => {
       db.beginTransaction((tErr) => {
         if (tErr) return res.status(500).json({ erro: tErr.message });
 
-        // 1. Devolve a quantidade ao estoque do produto
         db.query(
           "UPDATE produtos SET estoque = estoque + ? WHERE id = ?",
           [quantidade, produto_id],
@@ -175,7 +269,6 @@ app.delete("/api/vendas/:id", (req, res) => {
                 res.status(500).json({ erro: eErr.message }),
               );
 
-            // 2. Deleta a venda
             db.query("DELETE FROM vendas WHERE id = ?", [id], (dErr) => {
               if (dErr)
                 return db.rollback(() =>
