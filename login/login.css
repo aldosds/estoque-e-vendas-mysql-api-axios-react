@@ -61,6 +61,7 @@ button {
   font-size: 1rem;
   width: 100%;
   opacity: 0.9;
+  transition: opacity 0.4s ease-in-out;
 }
 
 button:hover {
