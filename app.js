@@ -1,5 +1,58 @@
+// 🛡️ VERIFICAÇÃO DE SESSÃO LOCAL ATIVA
+// Se o token não existir no navegador, impede a leitura do script e expulsa para a tela de login
+if (!localStorage.getItem("token")) {
+  window.location.href = "./login/login.html";
+}
+
 // Configuração da instância base do Axios
 const api = axios.create({ baseURL: "http://localhost:3000/api" });
+
+// 🔄 INTERCEPTOR DO AXIOS: Injeta o passaporte (Token) em 100% das chamadas HTTP automaticamente
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`; // Padrão de mercado para cabeçalhos JWT
+    }
+    return config;
+  },
+  (erro) => {
+    return Promise.reject(erro);
+  },
+);
+
+// 🔄 INTERCEPTOR DE RESPOSTA: Se o servidor rejeitar o token (ex expirou), desloga na hora
+api.interceptors.response.use(
+  (resposta) => resposta,
+  (erro) => {
+    if (erro.response?.status === 401 || erro.response?.status === 403) {
+      alert("Sua sessão expirou ou você não tem permissão!");
+      localStorage.clear(); // Limpa as credenciais locais salvas
+      window.location.href = "./login/login.html";
+    }
+    return Promise.reject(erro);
+  },
+);
+
+// Adicione também uma lógica simples no carregarPainel para esconder botões se o nível for 'operador'
+function aplicarPermissoesDeTela() {
+  const nivel = localStorage.getItem("usuario_nivel");
+  if (nivel === "operador") {
+    // Esconde o formulário de cadastro/edição de produtos para o operador
+    const form = document.getElementById("form-produto");
+    const tituloForm = document.getElementById("titulo-form");
+    const btnMenuUsuarios = document.getElementById("menu-usuarios");
+    if (form) form.style.display = "none";
+    if (tituloForm) tituloForm.style.display = "none";
+    if (btnMenuUsuarios) btnMenuUsuarios.style.display = "none";
+
+    // Opcional: Esconde os botões de Editar e Excluir das linhas da tabela
+    // (Podemos fazer isso escondendo as classes .btn-editar e .btn-excluir via CSS injetado)
+    const style = document.createElement("style");
+    style.innerHTML = ".btn-editar, .btn-excluir { display: none !important; }";
+    document.head.appendChild(style);
+  }
+}
 
 // Variável global que armazenará os produtos vindos do MySQL
 let produtos = [];
@@ -22,6 +75,7 @@ async function carregarProdutos() {
     );
   }
 }
+
 // Função de Renderização e Atualização da Interface (MÉTODOS DE ARRAY: REDUCE e MAP + DESESTRUTURAÇÃO)
 function atualizarPainel(listaParaExibir = produtos) {
   // .reduce() para encontrar o produto mais caro dinamicamente
@@ -95,6 +149,8 @@ function atualizarPainel(listaParaExibir = produtos) {
     `;
 
   tbody.innerHTML = htmlFinal;
+
+  aplicarPermissoesDeTela();
 
   // Para atualizar o grasfico
   atualizarGrafico(listaParaExibir);
