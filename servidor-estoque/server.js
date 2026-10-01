@@ -62,60 +62,88 @@ function verificarToken(req, res, next) {
 // 🔑 ROTAS DE AUTENTICAÇÃO
 // ==========================================
 
-// Rota de Cadastro de Usuários (Criptografa a senha antes de salvar)
-app.post("/api/auth/registrar", async (req, res) => {
-  const { nome, email, senha, nivel_acesso } = req.body;
+// Rota de Cadastro de Usuários (Protegida: apenas Admin pode cadastrar novos usuários)
+app.post("/api/auth/registrar", verificarToken, async (req, res) => {
+  // 🔒 Bloqueio de segurança: Se o usuário logado não for admin, barra o cadastro
+  if (req.usuarioLogado.nivel !== "admin") {
+    return res
+      .status(403)
+      .json({ erro: "Apenas administradores podem cadastrar novos usuários!" });
+  }
+
+  // Recebemos 'nivel_acesso_id' (número) em vez da string ENUM antiga
+  const { nome, email, senha, nivel_acesso_id } = req.body;
 
   try {
-    // Gera o 'salt' e encripta a senha usando algoritmo hash seguro (Bcrypt)
+    // Criptografa a senha do novo funcionário de forma segura
     const salt = await bcrypt.genSalt(10);
     const senhaCriptografada = await bcrypt.hash(senha, salt);
 
     const sql =
-      "INSERT INTO usuarios (nome, email, senha, nivel_acesso) VALUES (?, ?, ?, ?)";
-    db.query(sql, [nome, email, senhaCriptografada, nivel_acesso], (err) => {
-      if (err) return res.status(400).json({ erro: "E-mail já cadastrado!" });
-      res.json({ mensagem: "Usuário registrado com sucesso!" });
+      "INSERT INTO usuarios (nome, email, senha, nivel_acesso_id) VALUES (?, ?, ?, ?)";
+    db.query(sql, [nome, email, senhaCriptografada, nivel_acesso_id], (err) => {
+      if (err) {
+        console.error(err);
+        return res.status(400).json({
+          erro: "Erro ao cadastrar. E-mail já pode existir no sistema!",
+        });
+      }
+      res.json({ mensagem: "Novo usuário registrado com sucesso no MySQL!" });
     });
   } catch (err) {
     res.status(500).json({ erro: err.message });
   }
 });
 
-// Rota de Login (Gera o passaporte Token JWT se a senha bater)
+// Rota de Login (Gera o Token JWT baseado no INNER JOIN com a tabela de referência)
 app.post("/api/auth/login", (req, res) => {
   const { email, senha } = req.body;
 
-  db.query(
-    `SELECT u.*, n.nome AS nivel_nome 
-     FROM usuarios u 
-     INNER JOIN niveis_acesso n ON u.nivel_acesso_id = n.id 
-     WHERE u.email = ?`,
+  // 💡 APLICAÇÃO DO APRENDIZADO: INNER JOIN para capturar o nome do nível por extenso
+  const sqlBuscaUsuario = `
+    SELECT u.*, n.nome AS nivel_nome 
+    FROM usuarios u 
+    INNER JOIN niveis_acesso n ON u.nivel_acesso_id = n.id 
+    WHERE u.email = ?
+  `;
 
-    [email],
-    async (err, resultados) => {
-      if (err) return res.status(500).json({ erro: err.message });
-      if (resultados.length === 0)
-        return res.status(400).json({ erro: "E-mail ou senha inválidos!" });
+  db.query(sqlBuscaUsuario, [email], async (err, resultados) => {
+    if (err) {
+      console.error("Erro na query de login:", err.message);
+      return res
+        .status(500)
+        .json({ erro: "Erro interno no servidor de banco de dados." });
+    }
 
-      const usuario = resultados[0];
+    // Se o array de resultados vier vazio, significa que o e-mail não existe no MySQL
+    if (resultados.length === 0) {
+      return res.status(400).json({ erro: "E-mail ou senha inválidos!" });
+    }
 
-      // Compara a senha digitada com o hash criptografado salvo no MySQL
-      const senhaCorreta = await bcrypt.compare(senha, usuario.senha);
-      if (!senhaCorreta)
-        return res.status(400).json({ erro: "E-mail ou senha inválidos!" });
+    // Como o e-mail é UNIQUE, pegamos a primeira e única posição [0] do resultado
+    const usuario = resultados[0];
 
-      // Gera o Token JWT contendo ID e nível de acesso, com validade de 2 horas
-      const token = jwt.sign(
-        { id: usuario.id, nivel: usuario.nivel_acesso, nome: usuario.nome },
-        JWT_SECRET,
-        { expiresIn: "2h" },
-      );
+    // Compara a senha digitada no formulário com o hash Bcrypt salvo no banco
+    const senhaCorreta = await bcrypt.compare(senha, usuario.senha);
+    if (!senhaCorreta) {
+      return res.status(400).json({ erro: "E-mail ou senha inválidos!" });
+    }
 
-      // Devolve o token e os dados públicos para o Front-end
-      res.json({ token, nome: usuario.nome, nivel: usuario.nivel_acesso });
-    },
-  );
+    // Gera o Token JWT assinando com a nossa chave secreta
+    // Guardamos o 'usuario.nivel_nome' (que veio por extenso 'admin' ou 'operador' do JOIN)
+    const token = jwt.sign(
+      { id: usuario.id, nivel: usuario.nivel_nome, nome: usuario.nome },
+      JWT_SECRET,
+      { expiresIn: "2h" }, // Token expira automaticamente em 2 horas
+    );
+
+    // Retorna a resposta de sucesso com o Token e dados públicos para o Axios salvar no Front-end
+    res.json({
+      token,
+      nome: usuario.nome,
+      nivel: usuario.nivel_nome, // Envia 'admin' ou 'operador' por extenso para o app.js funcionar
+    });
+  });
 });
 
 // ==========================================
