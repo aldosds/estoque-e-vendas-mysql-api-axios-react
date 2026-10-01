@@ -34,7 +34,7 @@ h2 {
 h1 {
   font-size: 1.8rem;
   text-align: center;
-  margin-top: 10px;
+  /* margin-top: 10px; */
 }
 
 /* Estilização dos links */
@@ -98,6 +98,7 @@ select {
   font-size: 1rem;
   width: 100%;
   opacity: 0.9;
+  transition: opacity 0.4s ease-in-out;
 }
 
 .btn-cadastrar {
