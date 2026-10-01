@@ -2,9 +2,9 @@ document
   .getElementById("form-login")
   .addEventListener("submit", async function (e) {
     e.preventDefault();
-    const email = this.document.getElementById("email").value;
-    const senha = this.document.getElementById("senha").value;
-    const erroDiv = this.document.getElementById("erro");
+    const email = document.getElementById("email").value;
+    const senha = document.getElementById("senha").value;
+    const erroDiv = document.getElementById("erro");
 
     try {
       // Envia as credenciais para a nossa rota de Login do Node
@@ -20,7 +20,7 @@ document
       localStorage.setItem("usuario_nivel", resposta.data.nivel);
 
       // Direciona o usuário para o painel principal logado
-      window.location.href = "index.html";
+      window.location.href = "../index.html";
     } catch (error) {
       erroDiv.innerText = error.response?.data?.erro || "Erro de conexão.";
       erroDiv.style.display = "block";
