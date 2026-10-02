@@ -177,3 +177,14 @@ document.getElementById("busca-venda").addEventListener("input", function (e) {
 
 // Inicialização
 carregarVendas();
+
+// 🚪 OPERAÇÃO DE LOGOUT SEGURO
+document.getElementById("btn-logout").addEventListener("click", function () {
+  if (confirm("Deseja realmente sair do sistema?")) {
+    // Limpa o Token, Nome e Nível de Acesso salvos no navegador
+    localStorage.clear();
+
+    // Redireciona o usuário para a tela de login na raiz
+    window.location.href = "../login/login.html";
+  }
+});
