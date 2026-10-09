@@ -35,8 +35,34 @@ api.interceptors.response.use(
 
 // Adicione também uma lógica simples no carregarPainel para esconder botões se o nível for 'operador'
 function aplicarPermissoesDeTela() {
-  const nivel = localStorage.getItem("usuario_nivel");
-  if (nivel === "operador") {
+  // 01 EXIBIÇÃO DE PERFIL
+  // Captura os dados do usuário salvos no localStorage no momento do login
+  const nomeUsuario = localStorage.getItem("usuario_nome");
+  const nivelUsuario = localStorage.getItem("usuario_nivel");
+
+  // 1. Injeta o nome do usuário na mensagem de boas-vindas
+  const txtBoasVindas = document.getElementById("mensagem-boas-vindas");
+  if (txtBoasVindas && nomeUsuario) {
+    txtBoasVindas.innerHTML = `Usuário logado: <strong>${nomeUsuario}</strong>`;
+  }
+
+  // 2. Injeta e estiliza uma etiqueta (badge) com o nível de acesso dele
+  const txtBadge = document.getElementById("badge-nivel");
+  if (txtBadge && nivelUsuario) {
+    txtBadge.innerText = nivelUsuario;
+
+    // Altera a cor da etiqueta baseada no cargo (Dica visual de UX!)
+    if (nivelUsuario === "admin") {
+      txtBadge.style.backgroundColor = "#f2ce5a"; // Amarelo claro
+      txtBadge.style.color = "#856404"; // Marrom escuro
+    } else {
+      txtBadge.style.backgroundColor = "#cecfd1"; // Cinza claro
+      txtBadge.style.color = "#383d41"; // Cinza escuro
+    }
+  }
+
+  // 02 PERMISSÕES DE TELA
+  if (nivelUsuario === "operador") {
     // Esconde o formulário de cadastro/edição de produtos para o operador
     const form = document.getElementById("form-produto");
     const tituloForm = document.getElementById("titulo-form");
