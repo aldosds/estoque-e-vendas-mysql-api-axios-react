@@ -18,6 +18,34 @@
   </head>
   <body>
     <div class="container">
+      <!-- 👤 MENSAGEM DE BOAS-VINDAS ADICIONADA -->
+      <div
+        style="
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-top: 15px;
+          margin-bottom: 5px;
+          flex-wrap: wrap;
+          gap: 10px;
+        "
+      >
+        <span
+          id="mensagem-boas-vindas"
+          style="font-weight: 500; color: #555; font-size: 15px"
+        ></span>
+        <span
+          id="badge-nivel"
+          style="
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 4px 8px;
+            border-radius: 20px;
+          "
+        ></span>
+      </div>
+
       <h1 style="text-align: center">Histórico de Vendas Arquivadas</h1>
 
       <div style="text-align: center; margin-bottom: 20px">
@@ -69,7 +97,7 @@
 
       <div class="cards-container">
         <div class="card">
-          <div class="card-titulo">📈 Faturamento Acumulado (.reduce)</div>
+          <div class="card-titulo">📈 Faturamento Acumulado</div>
           <div id="total-faturamento" class="card-valor">R$ 0.00</div>
         </div>
         <div class="card" style="border-left-color: #007bff">
