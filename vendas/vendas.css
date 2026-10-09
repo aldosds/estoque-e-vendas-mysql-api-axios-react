@@ -54,6 +54,42 @@ h2 {
   margin: 20px 0 10px 0;
 }
 
+.links-container {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.link-produtos {
+  margin-right: 15px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #6c757d;
+}
+
+.link-vendas {
+  font-weight: bold;
+  text-decoration: none;
+  color: #28a745;
+}
+
+.link-usuarios {
+  font-weight: bold;
+  text-decoration: none;
+  color: #6c757d;
+  margin-left: 15px;
+}
+
+.btn-logout {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 14px;
+  margin-left: 15px;
+}
+
 .cards-container {
   display: grid;
   grid-template-columns: 1fr;
