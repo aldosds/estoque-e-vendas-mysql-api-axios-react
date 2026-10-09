@@ -25,6 +25,30 @@ body {
   width: 100%;
 }
 
+.continer-boas-vindas {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+  margin-bottom: 5px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.mensagem-boas-vindas {
+  font-weight: 500;
+  color: #555;
+  font-size: 15px;
+}
+
+.badge-nivel {
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border-radius: 20px;
+}
+
 h1,
 h2 {
   margin: 20px 0 10px 0;
