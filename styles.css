@@ -56,6 +56,13 @@ h1 {
   color: #6c757d;
 }
 
+.link-usuarios {
+  font-weight: bold;
+  text-decoration: none;
+  color: #6c757d;
+  margin-left: 15px;
+}
+
 /* Estilos do Formulário */
 form {
   background: #fff;
