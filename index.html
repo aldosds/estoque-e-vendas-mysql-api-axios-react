@@ -18,6 +18,34 @@
   </head>
   <body>
     <div class="container">
+      <!-- 👤 MENSAGEM DE BOAS-VINDAS ADICIONADA -->
+      <div
+        style="
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-top: 15px;
+          margin-bottom: 5px;
+          flex-wrap: wrap;
+          gap: 10px;
+        "
+      >
+        <span
+          id="mensagem-boas-vindas"
+          style="font-weight: 500; color: #555; font-size: 15px"
+        ></span>
+        <span
+          id="badge-nivel"
+          style="
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 4px 8px;
+            border-radius: 20px;
+          "
+        ></span>
+      </div>
+
       <h1>Gerenciador de Estoque e Vendas</h1>
 
       <div class="links-container">
@@ -29,12 +57,7 @@
         <a
           href="./cadastro-usuarios/cadastro-usuarios.html"
           id="menu-usuarios"
-          style="
-            font-weight: bold;
-            text-decoration: none;
-            color: #6c757d;
-            margin-left: 15px;
-          "
+          class="link-usuarios"
           >👥 Novo Usuário</a
         >
         <!-- 🚪 BOTÃO DE LOGOUT -->
