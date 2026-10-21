@@ -1,0 +1,6 @@
+# Bloqueia as dependências pesadas de ambos os projetos
+backend/node_modules/
+frontend-react/node_modules/
+
+# Bloqueia arquivos confidenciais com senhas do MySQL e chaves JWT
+backend/.env
