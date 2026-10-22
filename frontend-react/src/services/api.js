@@ -32,8 +32,8 @@ api.interceptors.response.use(
   (erro) => {
     if (erro.response?.status === 401 || erro.response?.status === 403) {
       alert("Sua sessão expirou ou você não possui permissão para esta ação!");
-      localStorage.removeItem("token"); // Para apagar apenas o token de login.
-
+      localStorage.clear();
+      // localStorage.removeItem("token"); // Para apagar apenas o token de login.
       window.location.href = "/login"; // Redirecionará usando as rotas do React futuramente
     }
     return Promise.reject(erro);
