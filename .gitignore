@@ -4,3 +4,5 @@ frontend-react/node_modules/
 
 # Bloqueia arquivos confidenciais com senhas do MySQL e chaves JWT
 backend/.env
+frontend-react/.env
+frontend-react/.env.local
