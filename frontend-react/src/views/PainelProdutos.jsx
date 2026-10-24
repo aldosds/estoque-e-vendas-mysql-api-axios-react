@@ -101,7 +101,16 @@ const PainelProdutos = () => {
             </div>
           </div>
         </div>
-        <h1>PainelProdutos</h1>
+
+        {/* Input de Filtro / Busca */}
+        <div>
+          <input
+            type="text"
+            placeholder="🔍 Digite para buscar e filtrar produtos em tempo real..."
+            value={termoBusca}
+            onChange={(e) => setTermoBusca(e.target.value)}
+          />
+        </div>
       </div>
     </div>
   );
