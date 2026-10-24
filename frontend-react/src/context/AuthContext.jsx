@@ -47,7 +47,9 @@ export function AuthProvider({ children }) {
         mensagem:
           erro.response?.data?.error || "Erro de conexão com o servidor.",
       };
-    }
+    } // finally {
+    //   // setCarregandoSessao(false);
+    // }
   }
 
   // 🚪 OPERAÇÃO: Logout Seguro
