@@ -112,6 +112,12 @@ const PainelProdutos = () => {
             className="w-full p-4 border border-slate-200 bg-white rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition text-slate-700 font-medium"
           />
         </div>
+
+        {/* Tabela de Dados */}
+        <div>
+          <h3>Registros Gerais de Estoque</h3>
+          TabelaProdutos
+        </div>
       </div>
     </div>
   );
