@@ -2,6 +2,7 @@ import { useState, useEffect, useContext, useMemo } from "react";
 import { AuthContext } from "../context/AuthContext";
 import api from "../services/api";
 import CardDestaque from "../components/CardDestaque";
+import TabelaProdutos from "../components/TabelaProdutos";
 
 const PainelProdutos = () => {
   const { usuario, logout } = useContext(AuthContext);
@@ -119,7 +120,11 @@ const PainelProdutos = () => {
           <h3 className="text-slate-700 font-bold text-lg">
             Registros Gerais de Estoque
           </h3>
-          TabelaProdutos
+          <TabelaProdutos
+            listaProdutos={produtosFiltrados}
+            onVeder={lidarComVenda}
+            usuarioNivel={usuario?.nivel}
+          />
         </div>
       </div>
     </div>
