@@ -114,8 +114,10 @@ const PainelProdutos = () => {
         </div>
 
         {/* Tabela de Dados */}
-        <div>
-          <h3>Registros Gerais de Estoque</h3>
+        <div className="flex flex-col gap-2">
+          <h3 className="text-slate-700 font-bold text-lg">
+            Registros Gerais de Estoque
+          </h3>
           TabelaProdutos
         </div>
       </div>
