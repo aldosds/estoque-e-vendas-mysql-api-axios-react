@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext, useMemo } from "react";
 import { AuthContext } from "../context/AuthContext";
 import api from "../services/api";
+import CardDestaque from "../components/CardDestaque";
 
 const PainelProdutos = () => {
   const { usuario, logout } = useContext(AuthContext);
@@ -91,7 +92,7 @@ const PainelProdutos = () => {
 
         {/* Linha de Cards Dinâmicos */}
         <div className="flex flex-col md:flex-row gap-4 w-full">
-          <div>CardDestaque</div>
+          <CardDestaque listaProdutos={produtos} />
           <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200 w-full md:max-w-md">
             <div className="text-xs font-bold uppercase tracking-wider text-slate-400">
               📊 Patrimônio Listado
