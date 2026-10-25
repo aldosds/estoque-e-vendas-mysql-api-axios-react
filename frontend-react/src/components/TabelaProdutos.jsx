@@ -42,17 +42,20 @@ const TabelaProdutos = ({ listaProdutos, onVender, usuarioNivel }) => {
                     <button
                       onClick={() => onVender(id)}
                       disabled={!temEstoque}
-                      className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm transition disabled:bg-slate-300 disabled:cursor-not-allowed cursor-pointer"
+                      className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm transition disabled:bg-slate-400 disabled:cursor-not-allowed cursor-pointer"
                     >
-                      Vender (-1)
+                      {temEstoque ? "Vender (-1)" : "Acabou (0)"}
                     </button>
                     {usuarioNivel === "admin" && (
                       <>
                         <button className="bg-amber-500 hover:bg-amber-600 text-slate-900 text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm transition cursor-pointer">
                           Editar
                         </button>
-                        <button className="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm transition cursor-pointer">
-                          Excluir
+                        <button
+                          disabled={temEstoque}
+                          className="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm transition disabled:bg-slate-400 disabled:cursor-not-allowed cursor-pointer"
+                        >
+                          {!temEstoque ? "Excluir" : "Inativo"}
                         </button>
                       </>
                     )}
