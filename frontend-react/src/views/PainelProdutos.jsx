@@ -122,7 +122,7 @@ const PainelProdutos = () => {
           </h3>
           <TabelaProdutos
             listaProdutos={produtosFiltrados}
-            onVeder={lidarComVenda}
+            onVender={lidarComVenda}
             usuarioNivel={usuario?.nivel}
           />
         </div>
