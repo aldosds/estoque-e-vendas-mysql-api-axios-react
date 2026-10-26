@@ -1,4 +1,10 @@
-const TabelaProdutos = ({ listaProdutos, onVender, usuarioNivel }) => {
+const TabelaProdutos = ({
+  listaProdutos,
+  onVender,
+  usuarioNivel,
+  onPrepararEditar,
+  onExcluir,
+}) => {
   return (
     <div className="w-full overflow-x-auto bg-white rounded-xl shadow-sm border border-slate-200">
       <table className="w-full border-collapse text-left text-sm text-slate-600 min-width-[600px]">
@@ -48,10 +54,22 @@ const TabelaProdutos = ({ listaProdutos, onVender, usuarioNivel }) => {
                     </button>
                     {usuarioNivel === "admin" && (
                       <>
-                        <button className="bg-amber-500 hover:bg-amber-600 text-slate-900 text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm transition cursor-pointer">
+                        <button
+                          onClick={() =>
+                            onPrepararEditar({
+                              id,
+                              nome,
+                              categoria,
+                              preco,
+                              estoque,
+                            })
+                          }
+                          className="bg-amber-500 hover:bg-amber-600 text-slate-900 text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm transition cursor-pointer"
+                        >
                           Editar
                         </button>
                         <button
+                          onClick={() => onExcluir(id)}
                           disabled={temEstoque}
                           className="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm transition disabled:bg-slate-400 disabled:cursor-not-allowed cursor-pointer"
                         >
