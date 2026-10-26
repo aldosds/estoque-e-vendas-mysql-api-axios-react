@@ -3,6 +3,7 @@ import { AuthContext } from "../context/AuthContext";
 import api from "../services/api";
 import CardDestaque from "../components/CardDestaque";
 import TabelaProdutos from "../components/TabelaProdutos";
+import FormProduto from "../components/FormProduto";
 
 const PainelProdutos = () => {
   const { usuario, logout } = useContext(AuthContext);
@@ -10,6 +11,7 @@ const PainelProdutos = () => {
   // Estados para gerenciar dados do MySQL e filtros
   const [produtos, setProdutos] = useState([]);
   const [termoBusca, setTermoBusca] = useState("");
+  const [produtoParaEditar, setProdutoParaEditar] = useState("");
 
   // 🚀 Chamada inicial do Axios para puxar dados do banco de dados relacional
   async function carregarProdutos() {
@@ -38,6 +40,53 @@ const PainelProdutos = () => {
       0,
     );
   }, [produtosFiltrados]);
+
+  // ➕ OPERAÇÃO HÍBRIDA: Cadastrar (POST) ou Atualizar (PUT) no MySQL
+  async function lidarComSalvarProduto(dadosObjeto) {
+    // Validação preventiva local de nome duplicado (.some())
+    const duplicado = produtos.some(
+      (p) =>
+        p.nome.toLowerCase() === dadosObjeto.nome.toLowerCase() &&
+        p.id !== produtoParaEditar?.id,
+    );
+
+    if (duplicado) {
+      alert("⚠️ Erro: Já existe um produto cadastrado com este nome!");
+      return;
+    }
+
+    try {
+      if (produtoParaEditar) {
+        // MODO PUT (Edição)
+        await api.put(`/produtos/${produtoParaEditar.id}`, dadosObjeto);
+        alert("Produto atualizado com sucesso no MySQL!");
+        setProdutoParaEditar(null); // Reseta modo edição
+      } else {
+        // MODO POST (Cadastro)
+        await api.post("/produtos", dadosObjeto);
+        alert("Novo produto adicionado com sucesso!");
+      }
+    } catch (error) {
+      alert(error.response?.data?.error || "Falha ao salvar produto.");
+    }
+  }
+
+  // 🗑️ OPERAÇÃO: Excluir Produto (DELETE) com transação segura no banco
+  async function lidarComExcluirProduto(idAlvo) {
+    if (
+      confirm(
+        "Tem certeza que deseja deletar este produto permanentemente do MySQL?",
+      )
+    ) {
+      try {
+        await api.delete(`/produtos/${idAlvo}`);
+        alert("Produto removido com sucesso!");
+        carregarProdutos();
+      } catch (error) {
+        alert(error.response?.data?.error || "Erro ao remover produto.");
+      }
+    }
+  }
 
   // 💰 OPERAÇÃO DE VENDA RELACIONAL: POST para a tabela de vendas do MySQL
   async function lidarComVenda(idProduto) {
@@ -91,6 +140,15 @@ const PainelProdutos = () => {
           </button>
         </header>
 
+        {/* 🔒 EXIBIÇÃO CONDICIONAL DO FORMULÁRIO: Apenas para Administradores */}
+        {usuario?.nivel === "admin" && (
+          <FormProduto
+            produtoEmEdicao={produtoParaEditar}
+            onSalvar={lidarComSalvarProduto}
+            onCancelar={() => setProdutoParaEditar(null)}
+          />
+        )}
+
         {/* Linha de Cards Dinâmicos */}
         <div className="flex flex-col md:flex-row gap-4 w-full">
           <CardDestaque listaProdutos={produtos} />
@@ -124,6 +182,8 @@ const PainelProdutos = () => {
             listaProdutos={produtosFiltrados}
             onVender={lidarComVenda}
             usuarioNivel={usuario?.nivel}
+            onPrepararEditar={setProdutoParaEditar}
+            onExcluir={lidarComExcluirProduto}
           />
         </div>
       </div>
