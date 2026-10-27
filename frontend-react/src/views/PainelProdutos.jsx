@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext, useMemo } from "react";
+import { useState, useEffect, useContext, useMemo, useRef } from "react";
 import { AuthContext } from "../context/AuthContext";
 import api from "../services/api";
 import CardDestaque from "../components/CardDestaque";
@@ -12,6 +12,20 @@ const PainelProdutos = () => {
   const [produtos, setProdutos] = useState([]);
   const [termoBusca, setTermoBusca] = useState("");
   const [produtoParaEditar, setProdutoParaEditar] = useState("");
+
+  const formularioRef = useRef(null);
+
+  function prepararEdicaoComRolagem(produto) {
+    setProdutoParaEditar(produto); // Ativa o formulário no modo edição
+
+    // Faz a tela rolar de forma suave (smooth) até a div do formulário
+    if (formularioRef.current) {
+      formularioRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  }
 
   // 🚀 Chamada inicial do Axios para puxar dados do banco de dados relacional
   async function carregarProdutos() {
@@ -144,11 +158,13 @@ const PainelProdutos = () => {
 
         {/* 🔒 EXIBIÇÃO CONDICIONAL DO FORMULÁRIO: Apenas para Administradores */}
         {usuario?.nivel === "admin" && (
-          <FormProduto
-            produtoEmEdicao={produtoParaEditar}
-            onSalvar={lidarComSalvarProduto}
-            onCancelar={() => setProdutoParaEditar(null)}
-          />
+          <div ref={formularioRef} className="scroll-mt-6">
+            <FormProduto
+              produtoEmEdicao={produtoParaEditar}
+              onSalvar={lidarComSalvarProduto}
+              onCancelar={() => setProdutoParaEditar(null)}
+            />
+          </div>
         )}
 
         {/* Linha de Cards Dinâmicos */}
@@ -184,7 +200,7 @@ const PainelProdutos = () => {
             listaProdutos={produtosFiltrados}
             onVender={lidarComVenda}
             usuarioNivel={usuario?.nivel}
-            onPrepararEditar={setProdutoParaEditar}
+            onPrepararEditar={prepararEdicaoComRolagem}
             onExcluir={lidarComExcluirProduto}
           />
         </div>
