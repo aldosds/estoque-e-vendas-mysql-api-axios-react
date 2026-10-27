@@ -61,10 +61,12 @@ const PainelProdutos = () => {
         await api.put(`/produtos/${produtoParaEditar.id}`, dadosObjeto);
         alert("Produto atualizado com sucesso no MySQL!");
         setProdutoParaEditar(null); // Reseta modo edição
+        carregarProdutos();
       } else {
         // MODO POST (Cadastro)
         await api.post("/produtos", dadosObjeto);
         alert("Novo produto adicionado com sucesso!");
+        carregarProdutos();
       }
     } catch (error) {
       alert(error.response?.data?.error || "Falha ao salvar produto.");
