@@ -26,15 +26,25 @@ api.interceptors.request.use(
   },
 );
 
+// 🔒 TRAVA LÓGICA GLOBAL: Evita que múltiplos alertas de sessão apareçam ao mesmo tempo
+let alertaExibido = false;
+
 // 🔄 INTERCEPTOR DE RESPOSTA: Se a sessão cair no MySQL (401/403), limpa os dados locais
 api.interceptors.response.use(
   (resposta) => resposta,
   (erro) => {
     if (erro.response?.status === 401 || erro.response?.status === 403) {
-      alert("Sua sessão expirou ou você não possui permissão para esta ação!");
-      localStorage.clear();
-      // localStorage.removeItem("token"); // Para apagar apenas o token de login.
-      window.location.href = "/login"; // Redirecionará usando as rotas do React futuramente
+      // Se a trava estiver falsa, significa que é o PRIMEIRO erro. Entra e bloqueia os próximos!
+      if (!alertaExibido) {
+        alertaExibido = true; // Ativa a trava imediatamente
+
+        alert(
+          "Sua sessão expirou ou você não possui permissão para esta ação!",
+        );
+        localStorage.clear();
+        // localStorage.removeItem("token"); // Para apagar apenas o token de login.
+        window.location.href = "/login"; // Redirecionará usando as rotas do React futuramente
+      }
     }
     return Promise.reject(erro);
   },
