@@ -87,9 +87,11 @@ const GraficoEstoque = ({ listaProdutos }) => {
     },
   };
   return (
-    <div>
-      <h3> 📊 Visão Geral do Estoque e Preços</h3>
-      <div>
+    <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200 w-full h-[350px] md:h-[400px]">
+      <h3 className="text-slate-700 font-bold text-base mb-4 flex items-center gap-2">
+        📊 Visão Geral do Estoque e Preços
+      </h3>
+      <div className="w-full h-[280px] md:h-[320px]">
         <Bar data={data} options={options} />
       </div>
     </div>
