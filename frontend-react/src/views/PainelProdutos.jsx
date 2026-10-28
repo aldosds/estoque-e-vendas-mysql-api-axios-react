@@ -4,6 +4,7 @@ import api from "../services/api";
 import CardDestaque from "../components/CardDestaque";
 import TabelaProdutos from "../components/TabelaProdutos";
 import FormProduto from "../components/FormProduto";
+import GraficoEstoque from "../components/GraficoEstoque";
 
 const PainelProdutos = () => {
   const { usuario, logout } = useContext(AuthContext);
@@ -127,7 +128,7 @@ const PainelProdutos = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 p-4 md:p-8 font-sans">
-      <div className="max-w-6xl margin-0 mx-auto flex flex-col gap-6">
+      <div className="max-w-6xl m-0 mx-auto flex flex-col gap-6">
         {/* Cabeçalho Superior */}
         <header className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between items-center pad-4">
           <div className="flex items-center gap-3">
@@ -180,8 +181,12 @@ const PainelProdutos = () => {
           </div>
         </div>
 
+        {/* 🚀 GRÁFICO INJETADO: Passando a lista filtrada reativamente */}
+        <GraficoEstoque listaProdutos={produtosFiltrados} />
+
         {/* Input de Filtro / Busca */}
-        <div className="w-full">
+        <div className="w-full flex flex-col gap-2">
+          <h3 className="text-slate-700 font-bold text-lg">Buscar Produtos</h3>
           <input
             type="text"
             placeholder="🔍 Digite para buscar e filtrar produtos em tempo real..."
