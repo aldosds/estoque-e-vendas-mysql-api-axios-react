@@ -5,6 +5,10 @@ import { NavLink } from "react-router-dom";
 const MenuNavegacao = () => {
   const { usuario, logout } = useContext(AuthContext);
 
+  // Função utilitária para aplicar estilo dinâmico no link ativo usando Tailwind
+  const estiloLink = ({ isActive }) =>
+    `font-bold text-sm transition duration-150 ${isActive ? "text-blue-600 border-b-2 border-blue-600 pb-1" : "text-slate-500 hover:text-slate-800"}`;
+
   return (
     <header className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
       {/* Informações do Perfil */}
@@ -28,12 +32,18 @@ const MenuNavegacao = () => {
 
       {/* 🛣️ LINKS DE NAVEGAÇÃO SPA (React Router v6) */}
       <nav className="flex items-center gap-6 my-2 md:my-0">
-        <NavLink to="/produtos">📦 Produtos</NavLink>
-        <NavLink to="/vendas">💰 Histórico de Vendas</NavLink>
+        <NavLink to="/produtos" className={estiloLink}>
+          📦 Produtos
+        </NavLink>
+        <NavLink to="/vendas" className={estiloLink}>
+          💰 Histórico de Vendas
+        </NavLink>
 
         {/* Renderização condicional do link de usuários apenas se for admin */}
         {usuario?.nivel === "admin" && (
-          <NavLink to="/cadastro-usuarios">👥 Novo Usuário</NavLink>
+          <NavLink to="/cadastro-usuarios" className={estiloLink}>
+            👥 Novo Usuário
+          </NavLink>
         )}
       </nav>
 
