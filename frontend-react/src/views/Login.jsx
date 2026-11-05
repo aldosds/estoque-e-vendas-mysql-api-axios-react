@@ -1,9 +1,11 @@
 import { useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 
 const Login = () => {
   // Sintoniza no contexto global de autenticação para herdar a função de login real
   const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   // Estados locais para controlar os dados dos campos do formulário
   const [email, setEmail] = useState("");
@@ -24,6 +26,9 @@ const Login = () => {
       // Se falhar (senha incorreta, e-mail inexistente), renderiza o erro do MySQL na tela
       setMensagemErro(resultado.mensagem);
       setCarregando(false);
+    } else {
+      // 🚀 SE DER SUCESSO: Redireciona via programação para a rota protegida de produtos!
+      navigate("/produtos", { replace: true });
     }
     // Se der sucesso, o próprio AuthContext mudará o estado global e a tela atualizará sozinha!
   }
