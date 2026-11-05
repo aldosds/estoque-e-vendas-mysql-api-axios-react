@@ -19,6 +19,10 @@ app.use("/api/produtos", produtoRoutes);
 app.use("/api/vendas", vendaRoutes);
 
 // Inicializa o servidor na porta 3000
-app.listen(3000, () => {
-  console.log("🖥️ Servidor rodando em http://localhost:3000");
+// Tenta rodar na porta definida no .env, caso não exista, assume a porta 3000
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`🖥️ Servidor MVC rodando na porta ${PORT}`);
+  console.log(`🖥️ Servidor rodando em http://localhost:${PORT}`);
 });
