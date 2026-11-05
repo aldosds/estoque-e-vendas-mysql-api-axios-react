@@ -130,7 +130,7 @@ const PainelProdutos = () => {
     <div className="min-h-screen bg-slate-50 p-4 md:p-8 font-sans">
       <div className="max-w-6xl m-0 mx-auto flex flex-col gap-6">
         {/* Cabeçalho Superior */}
-        <header className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between items-center pad-4">
+        {/* <header className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between items-center pad-4">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-full bg-slate-800 text-white flex items-center justify-center font-bold text-lg">
               {usuario?.nome?.charAt(0)}
@@ -155,7 +155,7 @@ const PainelProdutos = () => {
           >
             Encerrar Sessão 🚪
           </button>
-        </header>
+        </header> */}
 
         {/* 🔒 EXIBIÇÃO CONDICIONAL DO FORMULÁRIO: Apenas para Administradores */}
         {usuario?.nivel === "admin" && (
