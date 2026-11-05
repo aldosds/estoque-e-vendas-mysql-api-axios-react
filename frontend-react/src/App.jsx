@@ -1,7 +1,12 @@
 import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
+import { BrowserRouter, Routes, Rout, Navigate } from "react-router-dom";
+
 import Login from "./views/Login";
 import PainelProdutos from "./views/PainelProdutos";
+
+import ProtectedRoute from "./components/ProtectedRoute";
+import MenuNavegacao from "./components/MenuNavegacao";
 
 function App() {
   const { usuario, carregandoSessao } = useContext(AuthContext);
