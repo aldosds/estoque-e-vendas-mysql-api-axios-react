@@ -1,6 +1,4 @@
-// import { useContext } from "react";
-import { AuthContext } from "./context/AuthContext";
-import { BrowserRouter, Routes, Rout, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import Login from "./views/Login";
 import PainelProdutos from "./views/PainelProdutos";
@@ -8,28 +6,72 @@ import PainelProdutos from "./views/PainelProdutos";
 import ProtectedRoute from "./components/ProtectedRoute";
 import MenuNavegacao from "./components/MenuNavegacao";
 
-function App() {
-  // const { usuario, carregandoSessao } = useContext(AuthContext);
-
-  // // Enquanto o useEffect do contexto lê o localStorage, exibe uma tela neutra
-  // if (carregandoSessao) {
-  //   return (
-  //     <div className="min-h-screen flex justify-center items-center bg-gray-50 text-slate-600 font-semibold text-lg">
-  //       ⏳ Validando credenciais...
-  //     </div>
-  //   );
-  // }
-
-  // // Se NÃO houver usuário logado no contexto global, exibe a tela de login estilizada
-  // if (!usuario) {
-  //   return <Login />;
-  // }
-
-  // Se o usuário já estiver logado, por enquanto mostra apenas uma mensagem de sucesso
+// 📝 RASCUNHOS TEMPORÁRIOS: Telas que serão desenvolvidas nas próximas etapas
+function VisaoHistoricoVendas() {
   return (
-    <>
-      <PainelProdutos />
-    </>
+    <div>
+      <h3>📊 Em breve: Histórico de Vendas com Gráfico de Pizza</h3>
+    </div>
+  );
+}
+
+function VisaoCadastroUsuarios() {
+  return (
+    <div>
+      <h3>👥 Em breve: Cadastro de Novos Funcionários Lookup</h3>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        {/* Rota Pública: Login */}
+        <Route path="/login" element={<Login />} />
+
+        {/* 🔒 GRUPO DE ROTAS PROTEGIDAS (Usando o nosso componente guarda) */}
+        <Route
+          path="/produtos"
+          element={
+            <ProtectedRoute>
+              <div className="max-w-6xl mx-auto p-4 md:p-8 font-sans">
+                <MenuNavegacao />
+                <PainelProdutos />
+              </div>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/vendas"
+          element={
+            <ProtectedRoute>
+              <div className="max-w-6xl mx-auto p-4 md:p-8 font-sans">
+                <MenuNavegacao />
+                <VisaoHistoricoVendas />
+              </div>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Rota Protegida com barreira extra exclusiva para Administradores (adminOnly) */}
+        <Route
+          path="/cadastro-usuarios"
+          element={
+            <ProtectedRoute adminOnly={true}>
+              <div className="max-w-6xl mx-auto p-4 md:p-8 font-sans">
+                <MenuNavegacao />
+                <VisaoCadastroUsuarios />
+              </div>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* 🗺️ DIRECIONAMENTO PADRÃO: Se digitar qualquer caminho inválido, joga para os produtos */}
+        <Route path="*" element={<Navigate to="/produtos" replace />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
