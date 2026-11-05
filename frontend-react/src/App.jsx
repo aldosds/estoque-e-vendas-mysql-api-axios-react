@@ -1,4 +1,4 @@
-import { useContext } from "react";
+// import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
 import { BrowserRouter, Routes, Rout, Navigate } from "react-router-dom";
 
@@ -9,7 +9,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import MenuNavegacao from "./components/MenuNavegacao";
 
 function App() {
-  const { usuario, carregandoSessao } = useContext(AuthContext);
+  // const { usuario, carregandoSessao } = useContext(AuthContext);
 
   // // Enquanto o useEffect do contexto lê o localStorage, exibe uma tela neutra
   // if (carregandoSessao) {
