@@ -1,9 +1,9 @@
 import { useContext } from "react";
-import Navigate from "react-router-dom";
-import AutoContext from "../context/AutoContext";
+import { AuthContext } from "../context/AuthContext";
+import { Navigate } from "react-router-dom";
 
 const ProtectedRoute = ({ children, adminOnly = false }) => {
-  const { usuario, carregandoSessao } = useContext(AutoContext);
+  const { usuario, carregandoSessao } = useContext(AuthContext);
 
   // Enquanto o useEffect do contexto lê o localStorage, mantém a tela neutra
   if (carregandoSessao) {
