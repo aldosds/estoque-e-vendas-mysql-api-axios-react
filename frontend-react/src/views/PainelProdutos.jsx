@@ -129,34 +129,6 @@ const PainelProdutos = () => {
   return (
     <div className="min-h-screen bg-slate-50 p-4 md:p-8 font-sans">
       <div className="max-w-6xl m-0 mx-auto flex flex-col gap-6">
-        {/* Cabeçalho Superior */}
-        {/* <header className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between items-center pad-4">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-full bg-slate-800 text-white flex items-center justify-center font-bold text-lg">
-              {usuario?.nome?.charAt(0)}
-            </div>
-            <div>
-              <p className="text-slate-500 text-xs tracking-wider">
-                Acesso autenticado
-              </p>
-              <h2 className="text-slate-800 font-bold text-sm tracking-wider">
-                Olá, {usuario?.nome}!
-                <span
-                  className={`ml-2 text-xs uppercase px-2 py-0.5 rounded-full font-extrabold ${usuario?.nivel === "admin" ? "bg-amber-200 text-amber-800" : "bg-slate-200 text-slate-700"}`}
-                >
-                  {usuario?.nivel}
-                </span>
-              </h2>
-            </div>
-          </div>
-          <button
-            onClick={logout}
-            className="w-full sm:w-auto bg-rose-600 hover:bg-rose-700 text-white font-bold text-sm px-4 py-2 rounded-lg shadow-sm transition cursor-pointer"
-          >
-            Encerrar Sessão 🚪
-          </button>
-        </header> */}
-
         {/* 🔒 EXIBIÇÃO CONDICIONAL DO FORMULÁRIO: Apenas para Administradores */}
         {usuario?.nivel === "admin" && (
           <div ref={formularioRef} className="scroll-mt-6">
