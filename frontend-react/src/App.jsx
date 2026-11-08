@@ -5,15 +5,7 @@ import PainelProdutos from "./views/PainelProdutos";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import MenuNavegacao from "./components/MenuNavegacao";
-
-// 📝 RASCUNHOS TEMPORÁRIOS: Telas que serão desenvolvidas nas próximas etapas
-function VisaoHistoricoVendas() {
-  return (
-    <div>
-      <h3>📊 Em breve: Histórico de Vendas com Gráfico de Pizza</h3>
-    </div>
-  );
-}
+import HistoricoVendas from "./views/HistoricoVendas";
 
 function VisaoCadastroUsuarios() {
   return (
@@ -49,7 +41,7 @@ function App() {
             <ProtectedRoute>
               <div className="max-w-6xl mx-auto p-4 md:p-8 font-sans">
                 <MenuNavegacao />
-                <VisaoHistoricoVendas />
+                <HistoricoVendas />
               </div>
             </ProtectedRoute>
           }
