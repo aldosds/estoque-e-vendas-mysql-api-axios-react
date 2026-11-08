@@ -7,7 +7,7 @@ import FormProduto from "../components/FormProduto";
 import GraficoEstoque from "../components/GraficoEstoque";
 
 const PainelProdutos = () => {
-  const { usuario, logout } = useContext(AuthContext);
+  const { usuario } = useContext(AuthContext);
 
   // Estados para gerenciar dados do MySQL e filtros
   const [produtos, setProdutos] = useState([]);
