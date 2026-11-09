@@ -53,9 +53,9 @@ const HistoricoVendas = () => {
   }, [vendasFiltradas]);
 
   return (
-    <div>
+    <div className="flex flex-col gap-6">
       {/* Cards de Métricas Consolidadas via .reduce */}
-      <div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <CardFaturamentoAcumulado GerenciaisFaturamento={metricasGerenciais} />
         <CardUnidadesVendidas GerenciaisItens={metricasGerenciais} />
       </div>
