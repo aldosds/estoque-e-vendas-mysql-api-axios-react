@@ -36,9 +36,11 @@ const GraficoVendas = ({ vendasFiltradas }) => {
   }, [vendasFiltradas]);
 
   return (
-    <div>
-      <h3>🍰 Proporção de Faturamento por Produto</h3>
-      <div>
+    <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200 w-full h-[350px] md:h-[400px] flex flex-col items-center">
+      <h3 className="text-slate-700 font-bold text-base mb-2 w-full">
+        🍰 Proporção de Faturamento por Produto
+      </h3>
+      <div className="w-full h-[280px] md:h-[320px] flex justify-center">
         {vendasFiltradas.length > 0 ? (
           <Pie
             data={dadosGraficoPizza}
