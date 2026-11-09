@@ -32,12 +32,32 @@ const HistoricoVendas = () => {
     carregarHistorico();
   }, []);
 
+  // 🔍 FILTRO: Filtra o histórico de vendas pelo nome do produto digitado
+  const vendasFiltradas = useMemo(() => {
+    const termoClean = termoBusca.toLowerCase().trim();
+    return vendas.filter((v) =>
+      v.produto_nome.toLowerCase().includes(termoClean),
+    );
+  }, [termoBusca, vendas]);
+
+  // 📊 MÁGICA DO .REDUCE: Soma faturamento total e itens acumulados da lista visível
+  const metricasGerenciais = useMemo(() => {
+    return vendasFiltradas.reduce(
+      (acc, v) => {
+        acc.faturamento += Number(v.valor_total);
+        acc.itens += v.quantidade;
+        return acc;
+      },
+      { faturamento: 0, itens: 0 },
+    );
+  }, [vendasFiltradas]);
+
   return (
     <div>
       {/* Cards de Métricas Consolidadas via .reduce */}
       <div>
-        <CardFaturamentoAcumulado GerenciaisFaturamento={0} />
-        <CardUnidadesVendidas GerenciaisItens={0} />
+        <CardFaturamentoAcumulado GerenciaisFaturamento={metricasGerenciais} />
+        <CardUnidadesVendidas GerenciaisItens={metricasGerenciais} />
       </div>
     </div>
   );
