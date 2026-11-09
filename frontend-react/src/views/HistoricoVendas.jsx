@@ -5,8 +5,10 @@ import api from "../services/api";
 
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+
 import CardFaturamentoAcumulado from "../components/CardFaturamentoAcumulado";
 import CardUnidadesVendidas from "../components/CardUnidadesVendidas";
+import GraficoVendas from "../components/GraficoVendas";
 
 // 🚀 REGISTRO OBRIGATÓRIO: Ativa os arcos de pizza e legendas no Chart.js
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -68,6 +70,9 @@ const HistoricoVendas = () => {
         onChange={(e) => setTermoBusca(e.target.value)}
         className="w-full p-4 border border-slate-200 bg-white rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition text-slate-700 font-medium"
       />
+
+      {/* Gráfico de Pizza (Setores) em Tailwind */}
+      <GraficoVendas vendasFiltradas={vendasFiltradas} />
     </div>
   );
 };
