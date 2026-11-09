@@ -3,15 +3,9 @@ import { AuthContext } from "../context/AuthContext";
 
 import api from "../services/api";
 
-import { Pie } from "react-chartjs-2";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-
 import CardFaturamentoAcumulado from "../components/CardFaturamentoAcumulado";
 import CardUnidadesVendidas from "../components/CardUnidadesVendidas";
 import GraficoVendas from "../components/GraficoVendas";
-
-// 🚀 REGISTRO OBRIGATÓRIO: Ativa os arcos de pizza e legendas no Chart.js
-ChartJS.register(ArcElement, Tooltip, Legend);
 
 const HistoricoVendas = () => {
   const { usuario } = useContext(AuthContext);
