@@ -66,6 +66,7 @@ const HistoricoVendas = () => {
         placeholder="🔍 Filtrar histórico por nome do produto..."
         value={termoBusca}
         onChange={(e) => setTermoBusca(e.target.value)}
+        className="w-full p-4 border border-slate-200 bg-white rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition text-slate-700 font-medium"
       />
     </div>
   );
