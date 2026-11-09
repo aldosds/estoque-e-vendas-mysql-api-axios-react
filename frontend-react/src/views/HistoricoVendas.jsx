@@ -59,6 +59,14 @@ const HistoricoVendas = () => {
         <CardFaturamentoAcumulado GerenciaisFaturamento={metricasGerenciais} />
         <CardUnidadesVendidas GerenciaisItens={metricasGerenciais} />
       </div>
+
+      {/* Input de Filtro por Digitação */}
+      <input
+        type="text"
+        placeholder="🔍 Filtrar histórico por nome do produto..."
+        value={termoBusca}
+        onChange={(e) => setTermoBusca(e.target.value)}
+      />
     </div>
   );
 };
