@@ -6,14 +6,7 @@ import PainelProdutos from "./views/PainelProdutos";
 import ProtectedRoute from "./components/ProtectedRoute";
 import MenuNavegacao from "./components/MenuNavegacao";
 import HistoricoVendas from "./views/HistoricoVendas";
-
-function VisaoCadastroUsuarios() {
-  return (
-    <div>
-      <h3>👥 Em breve: Cadastro de Novos Funcionários Lookup</h3>
-    </div>
-  );
-}
+import CadastroUsuarios from "./views/CadastroUsuarios";
 
 function App() {
   return (
@@ -54,7 +47,7 @@ function App() {
             <ProtectedRoute adminOnly={true}>
               <div className="max-w-6xl mx-auto p-4 md:p-8 font-sans">
                 <MenuNavegacao />
-                <VisaoCadastroUsuarios />
+                <CadastroUsuarios />
               </div>
             </ProtectedRoute>
           }
