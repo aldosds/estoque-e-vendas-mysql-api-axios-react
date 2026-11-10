@@ -1,4 +1,5 @@
 import { useState } from "react";
+import api from "../services/api";
 
 const CadastroUsuarios = () => {
   // Estados para gerenciar as entradas do novo funcionário
@@ -14,6 +15,45 @@ const CadastroUsuarios = () => {
 
   async function lidarComCadastro(e) {
     e.preventDefault();
+    setMensagemSucesso("");
+    setMensagemErro("");
+    setCarregando(true);
+
+    // Validação local simples preventiva de tamanho de senha
+    if (senha.length < 6) {
+      setMensagemErro(
+        "A senha de acesso inicial deve conter no mínimo 6 caracteres!",
+      );
+      setCarregando(false);
+      return;
+    }
+
+    try {
+      // Dispara o POST direcionado para a rota protegida do back-end Node.js
+      const resposta = await api.post("/auth/registrar", {
+        nome: nome.trim(),
+        email: email.trim(),
+        senha,
+        nivel_acesso_id: parseInt(nivelAcessoId), // Converte a string do select para o ID numérico exigido pela FK
+      });
+
+      setMensagemSucesso(resposta.data.mensagem);
+      limparCampos();
+    } catch (error) {
+      console.error(error);
+      setMensagemErro(
+        error.response?.data?.error || "Falha ao registrar novo usuário no DB.",
+      );
+    } finally {
+      setCarregando(false);
+    }
+  }
+
+  function limparCampos() {
+    setNome("");
+    setEmail("");
+    setSenha("");
+    setNivelAcessoId("2");
   }
 
   return (
