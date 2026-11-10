@@ -19,7 +19,7 @@ const GraficoVendas = ({ vendasFiltradas }) => {
       labels: Object.keys(agrupado),
       datasets: [
         {
-          laberl: "Faturamento Total (R$)",
+          label: "Faturamento Total (R$)",
           data: Object.values(agrupado),
           backgroundColor: [
             "rgba(16, 185, 129, 0.7)", // Verde Emerald
