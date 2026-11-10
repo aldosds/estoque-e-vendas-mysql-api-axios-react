@@ -6,6 +6,7 @@ import api from "../services/api";
 import CardFaturamentoAcumulado from "../components/CardFaturamentoAcumulado";
 import CardUnidadesVendidas from "../components/CardUnidadesVendidas";
 import GraficoVendas from "../components/GraficoVendas";
+import TabelaVendas from "../components/TabelaVendas";
 
 const HistoricoVendas = () => {
   const { usuario } = useContext(AuthContext);
@@ -50,6 +51,9 @@ const HistoricoVendas = () => {
 
   return (
     <div className="flex flex-col gap-6">
+      {/* Gráfico de Pizza (Setores) em Tailwind */}
+      <GraficoVendas vendasFiltradas={vendasFiltradas} />
+
       {/* Cards de Métricas Consolidadas via .reduce */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <CardFaturamentoAcumulado GerenciaisFaturamento={metricasGerenciais} />
@@ -65,8 +69,12 @@ const HistoricoVendas = () => {
         className="w-full p-4 border border-slate-200 bg-white rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition text-slate-700 font-medium"
       />
 
-      {/* Gráfico de Pizza (Setores) em Tailwind */}
-      <GraficoVendas vendasFiltradas={vendasFiltradas} />
+      {/* Tabela de Auditoria do MySQL */}
+      <TabelaVendas
+        vendasFiltradas={vendasFiltradas}
+        usuario={usuario}
+        carregarHistorico={carregarHistorico}
+      />
     </div>
   );
 };
