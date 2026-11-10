@@ -140,6 +140,9 @@ const PainelProdutos = () => {
           </div>
         )}
 
+        {/* 🚀 GRÁFICO INJETADO: Passando a lista filtrada reativamente */}
+        <GraficoEstoque listaProdutos={produtosFiltrados} />
+
         {/* Linha de Cards Dinâmicos */}
         <div className="flex flex-col md:flex-row gap-4 w-full">
           <CardDestaque listaProdutos={produtos} />
@@ -152,9 +155,6 @@ const PainelProdutos = () => {
             </div>
           </div>
         </div>
-
-        {/* 🚀 GRÁFICO INJETADO: Passando a lista filtrada reativamente */}
-        <GraficoEstoque listaProdutos={produtosFiltrados} />
 
         {/* Input de Filtro / Busca */}
         <div className="w-full flex flex-col gap-2">
