@@ -1,22 +1,30 @@
 // Ferramentas de segurança
-import mysql from "mysql2";
+import pg from "pg";
 import dotenv from "dotenv";
 
 // Carrega as variáveis do arquivo .env
 dotenv.config();
 
-// Configuração da Conexão com o MySQL
-const db = mysql.createConnection({
+// Extraímos a classe Pool do pacote 'pg' (padrão recomendado para ES Modules)
+const { Pool } = pg;
+
+// Configuração da Conexão com o PostgreSQL
+const db = new Pool({
   host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
   user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
+  password: process.env.DB_PASS,
   database: process.env.DB_NAME,
-  timezone: process.env.DB_TIMEZONE,
 });
 
-db.connect((error) => {
-  if (error) console.error("❌ Erro ao conectar ao MySQL:", error.message);
-  else console.log("🚀 Conectado com sucesso ao Banco de Dados MySQL!");
+// Teste rápido de conexão ao iniciar o servidor
+db.connect((err, client, release) => {
+  if (err) {
+    console.error("❌ Erro ao conectar no PostgreSQL:", err.message);
+    return;
+  }
+  console.log("🐘 PostgreSQL conectado com sucesso via Pool!");
+  release(); // Devolve a conexão de teste para o Pool imediatamente
 });
 
 export default db;
