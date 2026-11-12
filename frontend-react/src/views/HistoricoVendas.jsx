@@ -50,31 +50,35 @@ const HistoricoVendas = () => {
   }, [vendasFiltradas]);
 
   return (
-    <div className="flex flex-col gap-6">
-      {/* Gráfico de Pizza (Setores) em Tailwind */}
-      <GraficoVendas vendasFiltradas={vendasFiltradas} />
+    <div className="min-h-screen bg-slate-50 p-4 md:p-8 font-sans">
+      <div className="max-w-6xl m-0 mx-auto flex flex-col gap-6">
+        {/* Gráfico de Pizza (Setores) em Tailwind */}
+        <GraficoVendas vendasFiltradas={vendasFiltradas} />
 
-      {/* Cards de Métricas Consolidadas via .reduce */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <CardFaturamentoAcumulado GerenciaisFaturamento={metricasGerenciais} />
-        <CardUnidadesVendidas GerenciaisItens={metricasGerenciais} />
+        {/* Cards de Métricas Consolidadas via .reduce */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <CardFaturamentoAcumulado
+            GerenciaisFaturamento={metricasGerenciais}
+          />
+          <CardUnidadesVendidas GerenciaisItens={metricasGerenciais} />
+        </div>
+
+        {/* Input de Filtro por Digitação */}
+        <input
+          type="text"
+          placeholder="🔍 Filtrar histórico por nome do produto..."
+          value={termoBusca}
+          onChange={(e) => setTermoBusca(e.target.value)}
+          className="w-full p-4 border border-slate-200 bg-white rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition text-slate-700 font-medium"
+        />
+
+        {/* Tabela de Auditoria do MySQL */}
+        <TabelaVendas
+          vendasFiltradas={vendasFiltradas}
+          usuario={usuario}
+          carregarHistorico={carregarHistorico}
+        />
       </div>
-
-      {/* Input de Filtro por Digitação */}
-      <input
-        type="text"
-        placeholder="🔍 Filtrar histórico por nome do produto..."
-        value={termoBusca}
-        onChange={(e) => setTermoBusca(e.target.value)}
-        className="w-full p-4 border border-slate-200 bg-white rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition text-slate-700 font-medium"
-      />
-
-      {/* Tabela de Auditoria do MySQL */}
-      <TabelaVendas
-        vendasFiltradas={vendasFiltradas}
-        usuario={usuario}
-        carregarHistorico={carregarHistorico}
-      />
     </div>
   );
 };
