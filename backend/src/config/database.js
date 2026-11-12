@@ -9,13 +9,20 @@ dotenv.config();
 const { Pool } = pg;
 
 // Configuração da Conexão com o PostgreSQL
-const db = new Pool({
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  database: process.env.DB_NAME,
-});
+const db = new Pool(
+  process.env.DATABASE_URL
+    ? {
+        connectionString: process.env.DATABASE_URL,
+        ssl: { rejectUnauthorized: false }, // Obrigatório para bancos na nuvem (Neon/Render)
+      }
+    : {
+        host: process.env.DB_HOST,
+        port: process.env.DB_PORT,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASS,
+        database: process.env.DB_NAME,
+      },
+);
 
 // Teste rápido de conexão ao iniciar o servidor
 db.connect((err, client, release) => {
