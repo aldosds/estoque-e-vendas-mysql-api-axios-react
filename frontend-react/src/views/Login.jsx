@@ -23,7 +23,7 @@ const Login = () => {
     const resultado = await login(email, senha);
 
     if (!resultado.sucesso) {
-      // Se falhar (senha incorreta, e-mail inexistente), renderiza o erro do MySQL na tela
+      // Se falhar (senha incorreta, e-mail inexistente), renderiza o erro do DB na tela
       setMensagemErro(resultado.mensagem);
       setCarregando(false);
     } else {
