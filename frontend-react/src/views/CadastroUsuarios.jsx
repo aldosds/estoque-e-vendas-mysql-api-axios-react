@@ -162,7 +162,9 @@ const CadastroUsuarios = () => {
               disabled={carregando}
               className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm px-6 py-3 rounded-lg shadow-sm transition disabled:bg-slate-300 disabled:cursor-not-allowed"
             >
-              {carregando ? "Registrando no MySQL..." : "Cadastrar Funcionário"}
+              {carregando
+                ? "Registrando no Banco de Dados..."
+                : "Cadastrar Funcionário"}
             </button>
           </div>
         </form>
