@@ -9,7 +9,7 @@ import GraficoEstoque from "../components/GraficoEstoque";
 const PainelProdutos = () => {
   const { usuario } = useContext(AuthContext);
 
-  // Estados para gerenciar dados do MySQL e filtros
+  // Estados para gerenciar dados do DB e filtros
   const [produtos, setProdutos] = useState([]);
   const [termoBusca, setTermoBusca] = useState("");
   const [produtoParaEditar, setProdutoParaEditar] = useState("");
@@ -34,7 +34,7 @@ const PainelProdutos = () => {
       const resposta = await api.get("/produtos");
       setProdutos(resposta.data);
     } catch (error) {
-      console.error("Erro ao sincronizar produtos com o MySQL: ", error);
+      console.error("Erro ao sincronizar produtos com o DB: ", error);
     }
   }
 
@@ -56,7 +56,7 @@ const PainelProdutos = () => {
     );
   }, [produtosFiltrados]);
 
-  // ➕ OPERAÇÃO HÍBRIDA: Cadastrar (POST) ou Atualizar (PUT) no MySQL
+  // ➕ OPERAÇÃO HÍBRIDA: Cadastrar (POST) ou Atualizar (PUT) no DB
   async function lidarComSalvarProduto(dadosObjeto) {
     // Validação preventiva local de nome duplicado (.some())
     const duplicado = produtos.some(
@@ -74,7 +74,7 @@ const PainelProdutos = () => {
       if (produtoParaEditar) {
         // MODO PUT (Edição)
         await api.put(`/produtos/${produtoParaEditar.id}`, dadosObjeto);
-        alert("Produto atualizado com sucesso no MySQL!");
+        alert("Produto atualizado com sucesso no Banco de Dados!");
         setProdutoParaEditar(null); // Reseta modo edição
         carregarProdutos();
       } else {
@@ -92,7 +92,7 @@ const PainelProdutos = () => {
   async function lidarComExcluirProduto(idAlvo) {
     if (
       confirm(
-        "Tem certeza que deseja deletar este produto permanentemente do MySQL?",
+        "Tem certeza que deseja deletar este produto permanentemente do Banco de Dados?",
       )
     ) {
       try {
@@ -105,7 +105,7 @@ const PainelProdutos = () => {
     }
   }
 
-  // 💰 OPERAÇÃO DE VENDA RELACIONAL: POST para a tabela de vendas do MySQL
+  // 💰 OPERAÇÃO DE VENDA RELACIONAL: POST para a tabela de vendas do DB
   async function lidarComVenda(idProduto) {
     const produtoAlvo = produtos.find((p) => p.id === idProduto);
     if (!produtoAlvo) return;
@@ -116,7 +116,7 @@ const PainelProdutos = () => {
         quantidade: 1,
         preco_unitario: produtoAlvo.preco,
       });
-      // Sincroniza a tela puxando a lista renovada do MySQL após a baixa
+      // Sincroniza a tela puxando a lista renovada do DB após a baixa
       carregarProdutos();
     } catch (error) {
       alert(
